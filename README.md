@@ -1,8 +1,15 @@
-# Team Bjørn Workspace
-
+# Team Bjørn Workspace - thatButton
 **For 3D (Dossier Developer Days) 2018**
 
 ---
+
+#### Protocol (button -> server) ver. 1.0
+
+* buttonnId - length: 2 bytes (uint16)
+* messageCounter - length: 2 bytes (uint16)
+* buttonState - length: 2 bytes (uint16) - value: 0 to 1
+* potentiometerState - length: 2 bytes (uint16) - value: 0 to 1023
+* potentiometerStep - length: 2 bytes (uint16) - value: 0 to 8
 
 #### ButtonEmulator.java
 
