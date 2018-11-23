@@ -8,7 +8,7 @@
 * buttonnId - length: 2 bytes (uint16)
 * messageCounter - length: 2 bytes (uint16)
 * buttonState - length: 2 bytes (uint16) - value: 0 to 1 (where 0 = unpressed)
-* potentiometerState - length: 2 bytes (uint16) - value: 6 to 848
+* potentiometerState - length: 2 bytes (uint16) - value: 0 to 1023
 * potentiometerStep - length: 2 bytes (uint16) - value: 0 to 8
 
 #### ButtonEmulator.java
