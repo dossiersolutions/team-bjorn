@@ -37,7 +37,7 @@ public class ButtonEmulator extends JFrame implements ChangeListener {
     messageCounter++;
     
     valueLabel.setText(
-        "msg: " + messageCounter + " pot: " + potentiometerValue + " " + (buttonIsPressed ? "Pressed." : "Not pressed."));
+        "msg: " + messageCounter + " pot: " + potentiometerValue + " qpot: " + quantizedPotentiometerValue + " " + (buttonIsPressed ? "Pressed." : "Not pressed."));
 
     try {
       Socket socket = new Socket(host, port);

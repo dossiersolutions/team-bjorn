@@ -1,0 +1,47 @@
+{
+	"settings": {
+		"logging": {
+			"buttonStateMessages": false
+		}
+	},
+	"triggers": [
+		{
+			"cond": 
+				{
+				  "type": "button_down"
+				}
+			,
+			"actions": [
+				{
+					"type": "log",
+					"message": "button_down detected!"
+				}
+			]
+		},
+		{
+			"cond": {
+				"type": "and",
+				"conds": [
+					{
+						"type": "button_down"
+					},
+					{
+						"type": "msg_field_equal",
+						"field": "pot_q_state",
+						"value": 8
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "log",
+					"message": "Button down while quantized pot state is at max (eight)!"
+				},
+				{
+					"type": "shell",
+					"command": "curl http://192.168.29.183:3000/start"
+				}
+			]
+		}
+	]
+}
