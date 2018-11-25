@@ -5,11 +5,13 @@
 
 #### Protocol (button -> server) ver. 1.0
 
-* buttonnId - length: 2 bytes (uint16)
+* buttonId - length: 2 bytes (uint16)
 * messageCounter - length: 2 bytes (uint16)
 * buttonState - length: 2 bytes (uint16) - value: 0 to 1 (where 0 = unpressed)
 * potentiometerState - length: 2 bytes (uint16) - value: 0 to 1023
 * potentiometerStep - length: 2 bytes (uint16) - value: 0 to 8
+
+All the numbers are network order, unsigned, 16-bit integers.
 
 #### ButtonEmulator.java
 
@@ -17,9 +19,7 @@ Software implementation of the button. Should work anywhere by running `javac Bu
 
 #### button_server_ruby
 
-A button server that can be configured with json to perform actions when button events happen. Written in ruby.
-
-It is written in Ruby, so it requires Ruby to run. Run it like this:
+A button server that can be configured with json to perform actions when button events happen. It is written in Ruby, so it requires Ruby to run:
 
     cd button_server_ruby
     ruby server.rb
