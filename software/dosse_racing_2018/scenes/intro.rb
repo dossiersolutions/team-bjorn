@@ -37,7 +37,7 @@ class IntroScene
 
     text_color = Gosu::Color.argb(nsin(@time * 0.005) * 255 , 255, 255, 255)
 
-    Assets::UI_FONT.draw_text("Press space bar or thatButton...", *UI_TEXT_BOTTOM_LEFT, 1, 1.0, 1.0, text_color)
+    Assets::UI_FONT.draw_text("Press thatButton or space bar...", *UI_TEXT_BOTTOM_LEFT, 1, 1.0, 1.0, text_color)
 
     draw_logo
     draw_star_image
