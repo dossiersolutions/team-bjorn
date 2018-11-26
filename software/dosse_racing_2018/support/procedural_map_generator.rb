@@ -19,6 +19,8 @@ class ProceduralMapGenerator
     top_left = CAMERA.view_top_left
     bottom_right = CAMERA.view_bottom_right
 
+    return if !@first_tile_top_left
+
     current_tile = @first_tile_top_left
 
     while current_tile.y < bottom_right.y
