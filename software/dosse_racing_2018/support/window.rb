@@ -1,7 +1,7 @@
 
 class Window < Gosu::Window
   def initialize(scene=LogoScene.new)
-    super(Gosu::screen_width, Gosu::screen_height, true)
+    super(*VIEWPORT_SIZE.map(&:to_i) , FULLSCREEN)
     self.caption = "DosseRacing 2018"
     @time = @old_time = Gosu::milliseconds()
     @scene = scene

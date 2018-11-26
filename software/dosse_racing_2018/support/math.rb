@@ -36,8 +36,8 @@ class Vector # add some more utilties to Ruby's default vector class
     Vector[x/other.x, y/other.y]
   end
 
-  def outside_screen?
-    (x < 0) || (x > MONITOR_RESOLUTION.x) || (y < 0) || (y > MONITOR_RESOLUTION.y)
+  def outside_viewport?
+    (x < 0) || (x > VIEWPORT_SIZE.x) || (y < 0) || (y > VIEWPORT_SIZE.y)
   end
 end
 

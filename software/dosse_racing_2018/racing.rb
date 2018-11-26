@@ -20,6 +20,7 @@ require "./support/math"
 require "./support/constants"
 require "./support/draw"
 require "./support/entity_system"
+require "./support/controls"
 
 require "./scenes/logo"
 require "./scenes/intro"

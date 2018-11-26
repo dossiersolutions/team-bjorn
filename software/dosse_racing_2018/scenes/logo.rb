@@ -4,7 +4,7 @@ class LogoScene
     Assets::JINGLE.play(false)
     @time = 0
     @starfield = Starfield.new
-    @car_pos = Vector[-Assets::SUV.width - MONITOR_RESOLUTION.x * 0.05, UI_TEXT_HEIGHT * 8]
+    @car_pos = Vector[-Assets::SUV.width - VIEWPORT_SIZE.x * 0.05, UI_TEXT_HEIGHT * 8]
   end
 
   def update(dt)
@@ -14,7 +14,7 @@ class LogoScene
       return IntroScene.new 
     end
 
-    @car_pos.x += dt * MONITOR_RESOLUTION.x * 0.00005
+    @car_pos.x += dt * VIEWPORT_SIZE.x * 0.00005
 
     self
   end
@@ -29,11 +29,13 @@ class LogoScene
 
     Assets::UI_FONT.draw_text("Team Bjorn", UI_TEXT_HEIGHT * 2, UI_TEXT_HEIGHT * 7, 1, 1.0, 1.0, c1)
 
-    Assets::UI_FONT.draw_text("presents...", UI_TEXT_HEIGHT * 5, UI_TEXT_HEIGHT * 9, 1, 1.0, 1.0, c2)
+    Assets::UI_FONT.draw_text("Dossier Developer Days 2018", UI_TEXT_HEIGHT * 5, UI_TEXT_HEIGHT * 8, 1, 1.0, 1.0, c2)
 
-    Assets::UI_FONT.draw_text("For Dossier Developer Days 2018", UI_TEXT_HEIGHT * 10, UI_TEXT_HEIGHT * 8, 1, 1.0, 1.0, c3)
+    Assets::UI_FONT.draw_text("presenting a thatButton enabled experience...", UI_TEXT_HEIGHT * 8, UI_TEXT_HEIGHT * 9, 1, 1.0, 1.0, c3)
 
-    Assets::SUV.draw_rot(@car_pos.x, @car_pos.y + Math::sin((@time)*0.001) * 25, 10, 180 - Math::sin((@time)*0.001) * 8, 0.5, 0.5, 1, 1, Gosu::Color::argb(255, 255, 255, 255))
+    car_scale = UI_TEXT_HEIGHT * 1 / Assets::SUV.height
+
+    Assets::SUV.draw_rot(@car_pos.x, @car_pos.y + Math::sin((@time)*0.001) * 25, -1, 180 - Math::sin((@time)*0.001) * 8, 0.5, 0.5, car_scale, car_scale, Gosu::Color::argb(255, 255, 255, 255))
 
   end
 end
