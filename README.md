@@ -23,3 +23,20 @@ A button server that can be configured with json to perform actions when button 
 
     cd button_server_ruby
     ruby server.rb
+
+#### DosseRacing 2018
+
+A thatButton-enabled top-down racing game written in Ruby, using the Gosu game library.
+
+**Running on windows:**
+
+* Must have at least Ruby version 2.3
+* Install bundler: `gem install bundler`
+* Run the game: `ruby racing.rb`
+
+**Running on linux:**
+
+* Must have at least Ruby version 2.3
+* Install dependencies: `sudo apt-get install build-essential libsdl2-dev libsdl2-ttf-dev libpango1.0-dev libgl1-mesa-dev libopenal-dev libsndfile-dev libmpg123-dev libgmp-dev`
+* Install bundler: `gem install bundler`
+* Run the game: `ruby racing.rb`
