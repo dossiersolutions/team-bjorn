@@ -18,9 +18,14 @@ end
 
 require "./support/math"
 require "./support/constants"
+require "./support/camera"
+require "./support/procedural_map_generator.rb"
 require "./support/draw"
 require "./support/entity_system"
 require "./support/controls"
+
+CAMERA = Camera.new
+PROCEDURAL_MAP_GENERATOR = ProceduralMapGenerator.new
 
 require "./scenes/logo"
 require "./scenes/intro"
@@ -28,8 +33,13 @@ require "./scenes/game_world"
 
 require "./support/window"
 
-# window = Window.new(IntroScene.new)
-# window = Window.new(GameWorld.new)
-window = Window.new()
+window = nil
+
+if SHORT_CIRCUIT
+  # window = Window.new(IntroScene.new)
+  window = Window.new(GameWorld.new)
+else
+  window = Window.new()
+end
 
 window.show

@@ -12,13 +12,13 @@ class Starfield < EntitySystem
       @b = Gosu.random(0, 255)
     end
 
-    def update(dt, birth_list, kill_list)
+    def update(dt, entities)
       @velocity += @force * dt
       @position += @velocity * dt
       @age      += dt
 
       if @position.outside_viewport?
-        kill_list << self
+        entities.kill(self)
       end
     end
 
