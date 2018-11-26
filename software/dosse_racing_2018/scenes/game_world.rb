@@ -1,8 +1,12 @@
 class ExhaustCloud
   LIFESPAN = 500.0
-  def initialize(position)
+  def initialize(position, giving_gas=false)
     @position = position
     @age = 0
+    @giving_gas = giving_gas
+    @dark =@giving_gas && Gosu.random(0, 100) > 80
+    @lightness = if @dark then Gosu.random(40, 100) else Gosu.random(120, 180) end
+    @mode = if @dark then :multiply else :add end
   end
 
   def update(dt, entities)
@@ -18,8 +22,8 @@ class ExhaustCloud
   end
 
   def draw(millis)
-    color = Gosu::Color::argb([norm_age * 800, (1-norm_age) * 400, 80].min, 200, 200, 200)
-    draw_triangle(@position, norm_age * 15, color, 30, :add)
+    color = Gosu::Color::argb([norm_age * 400, (1-norm_age) * 400, 80].min, @lightness, @lightness, @lightness)
+    draw_triangle(@position, norm_age * (if @giving_gas then 20 else 15 end), color, 30, @mode)
   end
 end
 
@@ -29,7 +33,7 @@ class Player
     @velocity = Vector[0, 0.0000001]
     @facing_angle = 0
     @controls = Controls.new
-    @car_scale = UI_TEXT_HEIGHT * 1 / Assets::SUV.height
+    @car_scale = 75 / Assets::SUV.height
     @exhaust_time_consumed = 0
     @time = 0
   end
@@ -38,34 +42,49 @@ class Player
     @controls.update(dt)
     @time += dt
 
+    # steering
+
     turn_amount = [@velocity.magnitude * 0.5, 0.1].min * dt
     @facing_angle -= turn_amount if Gosu.button_down?(Gosu::KB_LEFT)
     @facing_angle += turn_amount if Gosu.button_down?(Gosu::KB_RIGHT)
 
-    if @controls.button_gas?
-      if ((@controls.button_target_angle - @facing_angle) % 360) > 180
-        @facing_angle -= [turn_amount, @controls.button_target_angle - @facing_angle].max
+    if @controls.button_gas? # turn towards pot controlled target
+      degrees_difference = (@controls.button_target_angle - @facing_angle) % 360
+      if degrees_difference > 180
+        @facing_angle -= turn_amount if degrees_difference - turn_amount > 180
       else
-        @facing_angle += [turn_amount, @facing_angle - @controls.button_target_angle].max
+        @facing_angle += turn_amount if degrees_difference + turn_amount < 180
       end
     end
 
-    friction = @velocity.normalize * -0.0005
+    friction = @velocity.normalize * [-0.0005, @velocity.magnitude * -0.0003].min
+
+    # acceleration
 
     @force = Vector[0, 0]
-    @force += Vector.from_angle(@facing_angle, 0.001) if @controls.keyboard_gas? || @controls.button_gas?
+    possible_acceleration = Vector.from_angle(@facing_angle, 0.001)
+    @force += possible_acceleration if @controls.keyboard_gas? || @controls.button_gas?
     @force += friction
+
+    # integrate force
 
     @velocity += @force * dt
     @position += @velocity * dt
 
+    # spawn exhaust fumes
+
     while @exhaust_time_consumed < @time
-      @exhaust_time_consumed += 100
-      entities.add(ExhaustCloud.new(@position + Vector.from_angle(@facing_angle, -50)))
+      giving_gas = @controls.keyboard_gas? || @controls.button_gas?
+      @exhaust_time_consumed += if giving_gas then 10 else 100 end
+      entities.add(ExhaustCloud.new(@position + Vector.from_angle(@facing_angle, -50 + Gosu.random(-10, 10)) + Vector.random(@velocity.magnitude * 10), giving_gas))
     end
 
-    # focus towards the point where the care would be in this many milliseconds:
-    CAMERA.focus_of_attention = @position + @velocity * 300
+    # pull camera towards the point where the car would be in 200 milliseconds at current velocity:
+    CAMERA.focus_of_attention = @position + possible_acceleration * (@velocity.magnitude + 2) * 50000 + @velocity * 200 * Math.sqrt(@velocity.magnitude)
+    CAMERA.zoom = 1.0 / (@velocity.magnitude * (@velocity.magnitude) * 0.3 + 1)
+
+    # export data used by ui
+    DATA[:player_kph] = @velocity.magnitude * 70
   end
 
   def draw(millis)
@@ -99,5 +118,7 @@ class GameWorld < EntitySystem
     CAMERA.apply do
       super
     end
+
+    Assets::UI_FONT.draw_text("#{DATA[:player_kph].to_i} kph", *UI_TEXT_TOP_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
   end
 end

@@ -16,7 +16,7 @@ class Vector # add some more utilties to Ruby's default vector class
     self[Gosu.offset_x(angle, magnitude), Gosu.offset_y(angle, magnitude)]
   end
 
-  def self.random(xmin, xmax, ymin=xmin, ymax=xmax)
+  def self.random(xmin, xmax=-xmin, ymin=xmin, ymax=xmax)
     Vector[Gosu::random(xmin, xmax), Gosu::random(ymin, ymax)]
   end
 
