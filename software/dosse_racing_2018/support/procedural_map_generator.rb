@@ -32,12 +32,18 @@ class ProceduralMapGenerator
     while current_tile.y < bottom_right.y
       while current_tile.x < bottom_right.x
         current_tile.x += TILE_WIDTH
-        draw_triangle(current_tile, 40, Gosu::Color::GREEN)
+        draw_tile(current_tile)
         # n += 1
       end
       current_tile.x = @first_tile_top_left.x
       current_tile.y += TILE_WIDTH
     end
     # puts "drew " + n.to_s
+  end
+
+  def draw_tile(top_left)
+    # draw_triangle(top_left, 40, 
+    color = Gosu::Color::argb(80, 0, 255, 0)
+    Assets::WHITE_SOFT.draw(*top_left, -100, 10.0, 10.0, color, :add)
   end
 end

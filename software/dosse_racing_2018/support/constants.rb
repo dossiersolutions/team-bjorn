@@ -1,5 +1,5 @@
 MONITOR_RESOLUTION = Vector[Gosu::screen_width * 1.0, Gosu::screen_height * 1.0]
-SHORT_CIRCUIT = false
+SHORT_CIRCUIT = true
 VIEWPORT_SIZE = if SHORT_CIRCUIT then MONITOR_RESOLUTION * 0.5 else MONITOR_RESOLUTION end
 FULLSCREEN = !SHORT_CIRCUIT
 VIEWPORT_CENTER = VIEWPORT_SIZE / 2
@@ -16,6 +16,8 @@ module Assets # preload all game assets into global constants
   SUV        = Gosu::Image.new("assets/suv.png", :tileable => false)
   LOGO       = Gosu::Image.new("assets/logo_fixed.jpg")
   STARS      = Gosu::Image.new("assets/stars.jpg")
+  WHITE_SOFT = Gosu::Image.new("assets/white_soft_particle.png")
+  BLACK_SOFT = Gosu::Image.new("assets/black_soft_particle.png")
   THEME_SONG = Gosu::Song.new("assets/theme.ogg")
   JINGLE     = Gosu::Song.new("assets/jingle.ogg")
   UI_FONT    = Gosu::Font.new(UI_TEXT_HEIGHT.to_i, name: "assets/retganon.ttf")

@@ -1,12 +1,14 @@
 class ExhaustCloud
   LIFESPAN = 500.0
+
   def initialize(position, giving_gas=false)
     @position = position
     @age = 0
     @giving_gas = giving_gas
-    @dark =@giving_gas && Gosu.random(0, 100) > 80
+    @dark = @giving_gas && Gosu.random(0, 100) > 30
     @lightness = if @dark then Gosu.random(40, 100) else Gosu.random(120, 180) end
     @mode = if @dark then :multiply else :add end
+    @image = if @dark then Assets::BLACK_SOFT else Assets::WHITE_SOFT end
   end
 
   def update(dt, entities)
@@ -21,9 +23,16 @@ class ExhaustCloud
     @age / LIFESPAN
   end
 
+  def scale
+    0.2 + norm_age * 0.1
+  end
+
   def draw(millis)
-    color = Gosu::Color::argb([norm_age * 400, (1-norm_age) * 400, 80].min, @lightness, @lightness, @lightness)
-    draw_triangle(@position, norm_age * (if @giving_gas then 20 else 15 end), color, 30, @mode)
+    opacity = [norm_age * 400, (1-norm_age) * 400, 80].min
+    # color = Gosu::Color::argb(, @lightness, @lightness, @lightness)
+    scale = norm_age * (if @giving_gas then 20 else 15 end) * 0.1
+    @image.draw(*@position, 30, scale, scale, Gosu::Color::argb(opacity, 255, 255, 255))
+    # draw_triangle(@position, norm_age * (if @giving_gas then 20 else 15 end), color, 30, @mode)
   end
 end
 
@@ -33,7 +42,7 @@ class Player
     @velocity = Vector[0, 0.0000001]
     @facing_angle = 0
     @controls = Controls.new
-    @car_scale = 75 / Assets::SUV.height
+    @car_scale = 1
     @exhaust_time_consumed = 0
     @time = 0
   end
@@ -84,7 +93,7 @@ class Player
     CAMERA.zoom = 1.0 / (@velocity.magnitude * (@velocity.magnitude) * 0.3 + 1)
 
     # export data used by ui
-    DATA[:player_kph] = @velocity.magnitude * 70
+    DATA[:player_kph] = @velocity.magnitude * 65
   end
 
   def draw(millis)
