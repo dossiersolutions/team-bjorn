@@ -37,6 +37,10 @@ class Camera
     @position + VIEWPORT_CENTER / (@zoom * WORLD_ZOOM_VIEWPORT_ADJUSTMENT)
   end
 
+  def view_size_in_world
+    VIEWPORT_SIZE / (@zoom * WORLD_ZOOM_VIEWPORT_ADJUSTMENT)
+  end
+
   def within_viewport?(vector)
     distance_from_center = (vector - @position)
     (distance_from_center.x.abs < VIEWPORT_CENTER.x) && (distance_from_center.y.abs < VIEWPORT_CENTER.y)

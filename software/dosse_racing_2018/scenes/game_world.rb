@@ -116,7 +116,7 @@ class GameWorld < EntitySystem
   end
 
   def draw
-    ground_color = Gosu::Color::rgb(0, 100, 20)
+    ground_color = Gosu::Color::rgb(20, 70, 30)
     Gosu::draw_quad(
       0,                   0,                     ground_color,
       Gosu::screen_width,  0,                     ground_color,
