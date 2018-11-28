@@ -28,13 +28,13 @@ A button server that can be configured with json to perform actions when button 
 
 A thatButton-enabled top-down racing game written in Ruby, using the Gosu game library.
 
-**Running on windows:**
+**Running on Windows:**
 
-* Must have at least Ruby version 2.3
+* Must have at least Ruby version 2.3 and DevKit (to build packages)
 * Install bundler: `gem install bundler`
 * Run the game: `ruby racing.rb`
 
-**Running on linux:**
+**Running on Linux:**
 
 * Must have at least Ruby version 2.3
 * Install dependencies: `sudo apt-get install build-essential libsdl2-dev libsdl2-ttf-dev libpango1.0-dev libgl1-mesa-dev libopenal-dev libsndfile-dev libmpg123-dev libgmp-dev`
