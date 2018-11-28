@@ -1,15 +1,36 @@
 #include <ESP8266WiFi.h>
 
+#define NETWORK_MODULE_CONNECT_TIMEOUT 10000
+#define NETWORK_MODULE_CONNECT_SLEEP 100
 
-void NetworkModuleInit(char* ssid, char* password){
+boolean NetworkModuleConnect(char* ssid, char* password) {
+  LedArrayModuleClear();
+  LedArrayModuleLoading();
   WiFi.begin(ssid, password);
+  int connectingTime = 0;
+  while (!NetworkModuleIsConnected() && connectingTime <= NETWORK_MODULE_CONNECT_TIMEOUT) {
+    delay(NETWORK_MODULE_CONNECT_SLEEP);
+    connectingTime += NETWORK_MODULE_CONNECT_SLEEP;
+    LedArrayModuleLoading();
+  }
+  LedArrayModuleClear();
+  delay(200);
+  boolean connected = NetworkModuleIsConnected();
+  if(connected){
+    LedArrayModuleSuccess();
+    LedArrayModuleClear();
+  }else{
+    LedArrayModuleError();
+  }
+  return connected;
 }
 
-boolean NetworkModuleIsConnected(){
+void NetworkModuleSendStatusMessage(){
+  
+}
+
+boolean NetworkModuleIsConnected() {
   boolean connected = WiFi.status() == WL_CONNECTED;
-//  if(connected){
-//    logString(F("IP address"), WiFi.localIP());
-//  }
   log(F("connected"), connected);
   return connected;
 }

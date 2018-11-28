@@ -10,21 +10,13 @@ void setup() {
   MainButtonModuleInit();
   PotentiometerModuleInit();
   LedArrayModuleInit();
-  
-  LedArrayModuleClear();
-  LedArrayModuleLoading();
-  NetworkModuleInit("Fryden58HO305", "99535552");
-  while(!NetworkModuleIsConnected()){
-    LedArrayModuleLoading();  
-  }
-  LedArrayModuleClear();
-  LedArrayModuleSuccess();
-  LedArrayModuleClear();
+
+  NetworkModuleConnect("Fryden58HO305", "99535552");
 }
 
  
 void loop() {
   MainButtonModuleLedSync();
-  
-//  delay(100);
+  PotentiometerModuleLedSync();
+  delay(50);
 }
