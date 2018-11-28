@@ -14,6 +14,7 @@ require "bundler/inline"
 gemfile do # this uses bundler to install external gems
   source "https://rubygems.org"
   gem "gosu", require: true # the game library
+  gem "perlin", require: true
 end
 
 require "./support/math"

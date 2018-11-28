@@ -7,6 +7,7 @@ WORLD_ZOOM_VIEWPORT_ADJUSTMENT = VIEWPORT_SIZE.y / 650
 UI_TEXT_HEIGHT = VIEWPORT_SIZE.y / 16
 UI_TEXT_TOP_LEFT = Vector[UI_TEXT_HEIGHT * 0.5, UI_TEXT_HEIGHT / 2]
 UI_TEXT_BOTTOM_LEFT = Vector[UI_TEXT_HEIGHT * 0.5, Gosu::screen_height - UI_TEXT_HEIGHT * 1.5]
+PERLIN = Perlin::Generator.new 123, 1.0, 5
 
 DATA = { # used by entities etc to communicate
 

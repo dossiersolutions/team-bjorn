@@ -5,6 +5,9 @@ SAFETY_MARGIN = 1.5
 class MapTile
   def initialize(topleft)
     @topleft = Vector[*topleft]
+    @redness = (PERLIN[*(@topleft *  0.00001)] + 1) * 25
+    @darkness = (PERLIN[*(@topleft * -0.00001)] + 1) / 2
+    # puts @darkness
   end
 
   attr_reader :topleft
@@ -13,23 +16,23 @@ class MapTile
   def draw
     rng = Random.new(@topleft.hash)
     # draw_triangle(top_left, 40, 
-    green = rng.rand * 80
-    red = rng.rand * green
-    blue = rng.rand * red
-    color = Gosu::Color::argb(100, red, green, blue)
+    green = rng.rand * (50 - @redness)
+    red = rng.rand * (70) + @redness
+    blue = rng.rand * [red, green].min
+    color = Gosu::Color::argb(80 * (1-@darkness), red, green, blue)
     pos = @topleft + TILE_DIMENSIONS * rng.rand
     Assets::WHITE_SOFT.draw(*pos, -100, 30.0, 30.0, color, :add)
 
-    green = rng.rand * 80
-    red = rng.rand * green
-    blue = rng.rand * red
-    color = Gosu::Color::argb(50, red, green, blue)
+    green = rng.rand * 50
+    red = rng.rand * 70
+    blue = rng.rand * [red, green].min
+    color = Gosu::Color::argb(40, red, green, blue)
     pos = @topleft + TILE_DIMENSIONS * rng.rand
-    Assets::WHITE_SOFT.draw(*pos, -100, 15.0, 15.0, color, :add)
+    Assets::WHITE_SOFT.draw(*pos, -99, 15.0, 15.0, color, :add)
 
     pos = @topleft + TILE_DIMENSIONS * rng.rand
-    opacity = rng.rand * 80
-    Assets::BLACK_SOFT.draw(*pos, -99, 30.0, 30.0, Gosu::Color::argb(opacity, 255, 255, 255))
+    opacity = rng.rand * 60 + @darkness * 10
+    Assets::BLACK_SOFT.draw(*pos, -98, 30.0, 30.0, Gosu::Color::argb(opacity, 255, 255, 255))
   end
 end
 
