@@ -1,16 +1,19 @@
 class Camera
   def initialize
-    @zoom               = 1.0
     @focus_of_attention = VIEWPORT_CENTER
+    @zoom_target        = 1.0
     @position           = VIEWPORT_CENTER
+    @zoom               = 1.0
   end
 
-  attr_accessor :focus_of_attention, :zoom
+  attr_accessor :focus_of_attention, :zoom, :zoom_target
   attr_reader :position
 
   def update(dt, entities)
-    motion = (@focus_of_attention - @position) * 0.01 * dt
+    motion = (@focus_of_attention - @position) * 0.005 * dt
     @position += motion
+    zoom_motion = (@zoom_target - @zoom) * 0.005 * dt
+    @zoom += zoom_motion
     # lerp to focus of attention
   end
 

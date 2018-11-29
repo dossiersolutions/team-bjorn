@@ -14,7 +14,7 @@ class EntitySystem
     @entities.each {|e| e.update(dt, self) }
     @kill_list.each  {|e| @entities.delete(e) }
     @birth_list.each {|e| @entities << e }
-    abort("too many entities created") if @birth_list.length > 100
+    abort("too many entities created") if @birth_list.length > 1000
     @birth_list = @kill_list = nil
     self
   end

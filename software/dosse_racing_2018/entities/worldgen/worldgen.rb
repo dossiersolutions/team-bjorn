@@ -1,42 +1,10 @@
+
 TILE_WIDTH = 1024
 TILE_DIMENSIONS = Vector[TILE_WIDTH, TILE_WIDTH]
 SAFETY_MARGIN = 1.5
 
-class MapTile
-  def initialize(topleft)
-    @topleft = Vector[*topleft]
-    @redness = (PERLIN[*(@topleft *  0.00001)] + 1) * 25
-    @darkness = (PERLIN[*(@topleft * -0.00001)] + 1) / 2
-    # puts @darkness
-  end
 
-  attr_reader :topleft
-  attr_accessor :last_access
-
-  def draw
-    rng = Random.new(@topleft.hash)
-    # draw_triangle(top_left, 40, 
-    green = rng.rand * (50 - @redness)
-    red = rng.rand * (70) + @redness
-    blue = rng.rand * [red, green].min
-    color = Gosu::Color::argb(80 * (1-@darkness), red, green, blue)
-    pos = @topleft + TILE_DIMENSIONS * rng.rand
-    Assets::WHITE_SOFT.draw(*pos, -100, 30.0, 30.0, color, :add)
-
-    green = rng.rand * 50
-    red = rng.rand * 70
-    blue = rng.rand * [red, green].min
-    color = Gosu::Color::argb(40, red, green, blue)
-    pos = @topleft + TILE_DIMENSIONS * rng.rand
-    Assets::WHITE_SOFT.draw(*pos, -99, 15.0, 15.0, color, :add)
-
-    pos = @topleft + TILE_DIMENSIONS * rng.rand
-    opacity = rng.rand * 60 + @darkness * 10
-    Assets::BLACK_SOFT.draw(*pos, -98, 30.0, 30.0, Gosu::Color::argb(opacity, 255, 255, 255))
-  end
-end
-
-class ProceduralMapGenerator
+class WorldGen
   def initialize
     @tiles = {}
     @time = 0
@@ -56,6 +24,10 @@ class ProceduralMapGenerator
     @tiles.delete_if do |key, value|
       old = @time - value.last_access > 1000
       @active_tile_count -= 1 if old
+      if old
+        value.teardown(entities)
+        entities.kill(value)
+      end
       old
     end
 
@@ -63,13 +35,6 @@ class ProceduralMapGenerator
 
     # puts @first_tile_top_left
     # puts @last_tile_top_left
-  end
-
-  def draw(millis)
-    # top_left = CAMERA.view_top_left
-    bottom_right = CAMERA.view_bottom_right
-
-    return if !@first_tile_top_left
 
     current_tile = Vector[*@first_tile_top_left]
 
@@ -81,21 +46,29 @@ class ProceduralMapGenerator
 
     while current_tile.y < bottom_right.y
       while current_tile.x < bottom_right.x
-        current_tile.x += TILE_WIDTH
-
         if !@tiles[current_tile.to_a]
-          @tiles[current_tile.to_a] = MapTile.new(current_tile)
+          @tiles[current_tile.to_a] = tile = MapTile.new(current_tile, entities)
+          entities.add(tile)
           @active_tile_count += 1
         end
 
         tile = @tiles[current_tile.to_a]
         tile.last_access = @time
-        tile.draw
         # n += 1
+
+        current_tile.x += TILE_WIDTH
       end
       current_tile.x = @first_tile_top_left.x
       current_tile.y += TILE_WIDTH
     end
+  end
+
+  def draw(millis)
+    # top_left = CAMERA.view_top_left
+    bottom_right = CAMERA.view_bottom_right
+
+    return if !@first_tile_top_left
+
     # puts "drew " + n.to_s
   end
 end

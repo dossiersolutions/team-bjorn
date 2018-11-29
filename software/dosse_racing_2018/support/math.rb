@@ -16,6 +16,10 @@ class Vector # add some more utilties to Ruby's default vector class
     self[Gosu.offset_x(angle, magnitude), Gosu.offset_y(angle, magnitude)]
   end
 
+  def self.rng_random(rng)
+    Vector[rng.rand, rng.rand]
+  end
+
   def self.random(xmin, xmax=-xmin, ymin=xmin, ymax=xmax)
     Vector[Gosu::random(xmin, xmax), Gosu::random(ymin, ymax)]
   end
@@ -26,6 +30,13 @@ class Vector # add some more utilties to Ruby's default vector class
 
   def angle
     Math::atan2(y, x).radians_to_gosu
+  end
+
+  def rotate(angle)
+    angle = angle.gosu_to_radians
+    sn = Math.sin(angle)
+    cs = Math.cos(angle)
+    Vector[x * cs - y * sn, x * sn + y * cs]
   end
 
   def mult_each(other)
