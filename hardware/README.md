@@ -15,5 +15,5 @@
 * https://www.digitalimpuls.no/sett/136791/resistor-kit-10stk-x-10-forskjellige-100r-200r-330r-1k-2k-5-1k-10k-100k-1m
 #### Technical CAD drawing
 ![Screenshot](https://github.com/dossiersolutions/team-bjorn/raw/master/hardware/CAD/drawingCAD.png)
-#### Electrical connection drawing
+#### Electrical drawing
 ![Screenshot](https://github.com/dossiersolutions/team-bjorn/raw/master/hardware/Electro/drawingElectrical.png)
