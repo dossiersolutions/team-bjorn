@@ -13,3 +13,12 @@ void logString(String name, char* value){
     Serial.println(value);
   }
 }
+
+int getMedian(int a, int b , int c) {
+    int x = a-b;
+    int y = b-c;
+    int z = a-c;
+    if(x*y > 0) return b;
+    if(x*z > 0) return c;
+    return a;
+}

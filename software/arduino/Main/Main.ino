@@ -18,5 +18,5 @@ void setup() {
 void loop() {
   MainButtonModuleLedSync();
   PotentiometerModuleLedSync();
-  delay(50);
+  delay(10);
 }

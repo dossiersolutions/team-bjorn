@@ -11,9 +11,9 @@
 #define COLOR_CYAN 0x00FFFF
 #define COLOR_BLUE 0x0000FF
 #define COLOR_PURPLE 0xFF00FF
-#define COLOR_BROWN 0x654321
+#define COLOR_PINK 0xFFC0CB
 
-const int COLORS[8] = {COLOR_GREEN,COLOR_YELLOW,COLOR_RED,COLOR_WHITE,COLOR_CYAN,COLOR_BLUE,COLOR_PURPLE,COLOR_BROWN};
+const int COLORS[8] = {COLOR_GREEN,COLOR_YELLOW,COLOR_RED,COLOR_WHITE,COLOR_CYAN,COLOR_BLUE,COLOR_PURPLE,COLOR_PINK};
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_ARRAY_NUM_PIXELS, PIN_LED_ARRAY, NEO_GRBW + NEO_KHZ800);
 
@@ -50,9 +50,6 @@ void LedArrayModuleSingleColor(int pixelNumber, uint32_t color){
 }
 
 void LedArrayModuleSingleColorPredefined(int pixelNumber){
-  strip.setPixelColor(pixelNumber, COLOR_WHITE);
-  strip.show();
-  delay(500);
   strip.setPixelColor(pixelNumber, COLORS[pixelNumber]);
   strip.show();
 }
@@ -64,7 +61,7 @@ void LedArrayModuleSingleBlinking(int pixelNumber, uint32_t color){
 
 void LedArrayModuleLoading(){
   LedArrayModuleSetBrightness(10);
-  LedArrayModuleKnightRider(3, 64, 2, COLOR_YELLOW);
+  LedArrayModuleKnightRider(3, 64, 2, COLOR_WHITE);
 }
 
 void LedArrayModuleSetBrightness(byte brightness){
