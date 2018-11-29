@@ -8,7 +8,7 @@
 		{
 			"cond": 
 				{
-				  "type": "button_down"
+				  "event": "button_down"
 				}
 			,
 			"actions": [
@@ -19,14 +19,33 @@
 			]
 		},
 		{
+			"cond": 
+				{
+					"operator": ">",
+					"field": "pot_state",
+					"value": 1000
+				}
+			,
+			"actions": [
+				{
+					"type": "log",
+					"message": "pot state above 1000: $pot_state"
+				},
+				{
+					"type": "shell",
+					"command": "echo $pot_state"
+				}
+			]
+		},
+		{
 			"cond": {
-				"type": "and",
+				"operator": "and",
 				"conds": [
 					{
-						"type": "button_down"
+						"event": "button_down"
 					},
 					{
-						"type": "msg_field_equal",
+						"operator": "==",
 						"field": "pot_q_state",
 						"value": 8
 					}

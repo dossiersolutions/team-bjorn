@@ -3,42 +3,66 @@ require "json"
 
 CFG = JSON.parse(File.read("config.json"))
 
-Message = Struct.new(:button_id, :counter, :button_state, :pot_state, :pot_q_state) do
+MSG_FIELDS = [:button_id, :counter, :button_state, :pot_state, :pot_q_state]
+Message = Struct.new(*MSG_FIELDS) do
   def readable
     to_a.join(", ")
   end
 end
 
 module CondEval
-  def self.and(cond, msg, prev_msg)
-    cond["conds"].all? do |sub_cond|
-      eval_cond(sub_cond, msg, prev_msg)
+  def self.event(cond, msg, prev_msg)
+    case cond["event"]
+    when "button_down"
+      return false if !prev_msg
+      return (msg.button_state == 1) && (prev_msg.button_state == 0)
+    else
+      throw "invalid event kind #{cond["event"]}"
     end
   end
 
-  def self.button_down(cond, msg, prev_msg)
-    return false if !prev_msg
-    (msg.button_state == 1) && (prev_msg.button_state == 0)
-  end
-
-  def self.msg_field_equal(cond, msg, prev_msg)
+  def self.operator(cond, msg, prev_msg)
     field = cond["field"]
-    msg[field] == cond["value"]
+    case cond["operator"]
+    when "=="  then msg[field] == cond["value"]
+    when "!="  then msg[field] != cond["value"]
+    when "<"   then msg[field] <  cond["value"]
+    when ">"   then msg[field] >  cond["value"]
+    when "<="  then msg[field] <= cond["value"]
+    when ">="  then msg[field] >= cond["value"]
+    when "and" then cond["conds"].all? { |sub_cond| eval_cond(sub_cond, msg, prev_msg) }
+    when "or"  then cond["conds"].any? { |sub_cond| eval_cond(sub_cond, msg, prev_msg) }
+    else throw "invalid operator!"
+    end
   end
+end
+
+def interpolate_config_str(str, msg)
+  result = MSG_FIELDS.inject(str) do |memo, field|
+    memo.gsub("$" + field.to_s, msg.send(field).to_s)
+  end
+  result
 end
 
 module ActionEval
   def self.log(action, msg)
-    puts action["message"]
+    puts interpolate_config_str(action["message"], msg)
   end
 
   def self.shell(action, msg)
-    system action["command"]
+    system interpolate_config_str(action["command"], msg)
   end
 end
 
 def eval_cond(cond, msg, prev_msg)
-  CondEval.send(cond["type"].to_sym, cond, msg, prev_msg)
+  type = if cond["type"]
+    cond["type"].to_sym
+  elsif cond["event"]
+    :event
+  elsif cond["operator"]
+    :operator
+  end
+  CondEval.send(type, cond, msg, prev_msg)
 end
 
 def eval_actions(actions, msg)
