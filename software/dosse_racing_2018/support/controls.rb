@@ -12,27 +12,25 @@ class Controls
     @button_target_angle = 0
     @time_since_last_button_use = 100_000
     @message = nil
-    @socket = Socket.new(AF_INET, SOCK_STREAM, 0)
-    @socket.bind(Socket.sockaddr_in(38911, "0.0.0.0"))
-    @socket.listen(5)
-    puts "Button server listening.."
+
+    Thread.new do
+      server = TCPServer.open(38911) 
+
+      loop do
+        sock = server.accept()
+        @message = ButtonMessage.new(*sock.read(10).unpack("n*"))
+        @time_since_last_button_use = 0
+        @button_target_angle = @message.pot_state # TODO
+        sock.close()
+      end
+    end
+
   end
 
   attr_reader :button_target_angle, :time_since_last_button_use
 
   def update(dt)
     @time_since_last_button_use += dt
-
-    begin
-      client_socket, client_sockaddr = @socket.accept_nonblock
-      @message = ButtonMessage.new(*client_socket.read(10).unpack("n*"))
-      @time_since_last_button_use = 0
-      @button_target_angle = @message.pot_state # TODO
-      client_socket.close
-    rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EINTR, Errno::EWOULDBLOCK
-      # IO.select([@socket])
-      # retry
-    end
 
     @button_target_angle -= 0.3 * dt if Gosu.button_down?(Gosu::KB_A)
     @button_target_angle += 0.3 * dt if Gosu.button_down?(Gosu::KB_D)
@@ -47,7 +45,11 @@ class Controls
   end
 
   def button_gas?
-    Gosu.button_down?(Gosu::KB_SPACE) || @message&.button_state
+    Gosu.button_down?(Gosu::KB_SPACE) || @message && @message.button_state == 1
+  end
+
+  def gas?
+    button_gas? || keyboard_gas?
   end
 
 end

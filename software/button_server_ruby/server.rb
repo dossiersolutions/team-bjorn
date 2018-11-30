@@ -79,7 +79,7 @@ def eval_actions(actions, msg)
 end
 
 server = TCPServer.open(38911) 
-puts "Team Bjørn mock server listening..."
+puts "Team Bjørn button server listening..."
 
 msg = nil
 

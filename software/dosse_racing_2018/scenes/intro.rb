@@ -10,7 +10,7 @@ class IntroScene
   def update(dt)
     @time += dt
 
-    return GameWorld.new if (Gosu.button_down?(Gosu::KB_SPACE) and (@time > 1000))
+    return GameWorld.new if (Controls.gas? and (@time > 1000))
 
     @starfield.update(dt)
 

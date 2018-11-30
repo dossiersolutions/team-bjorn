@@ -50,6 +50,10 @@ class Vector # add some more utilties to Ruby's default vector class
   def outside_viewport?
     (x < 0) || (x > VIEWPORT_SIZE.x) || (y < 0) || (y > VIEWPORT_SIZE.y)
   end
+
+  def hashcode
+    x + y * 10499
+  end
 end
 
 class Gosu::Image

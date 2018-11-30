@@ -6,7 +6,7 @@ class MapTile
     @redness = @forest_amount * 50
     @darkness = (PERLIN[*(@topleft * -0.00001)] + 1) * 0.5
 
-    rng = Random.new(@topleft.hash)
+    rng = Random.new(@topleft.hashcode)
 
     tree_count = [(@forest_amount * 200).to_i - 100, 0].max
     # puts tree_count
@@ -33,7 +33,7 @@ class MapTile
   end
 
   def draw(millis=0)
-    rng = Random.new(@topleft.hash)
+    rng = Random.new(@topleft.hashcode)
     # draw_triangle(top_left, 40, 
     green = rng.rand * (50 - @redness)
     red = rng.rand * (70) + @redness

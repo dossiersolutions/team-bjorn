@@ -20,7 +20,7 @@ class Player
     @time += dt
 
     if @dead
-      DATA[:big_text] = "You drove into a tree, you one-legged imbecile excuse of a dork."
+      DATA[:big_text] = "You drove into a tree, you one-legged imbecile excuse for a dork."
       @dead_for += dt
 
       if @dead_for > 3000

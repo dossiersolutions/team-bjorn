@@ -1,8 +1,10 @@
 MONITOR_RESOLUTION = Vector[Gosu::screen_width * 1.0, Gosu::screen_height * 1.0]
 SHORT_CIRCUIT = true
-VIEWPORT_SIZE = MONITOR_RESOLUTION * 0.5
+DEV_MODE = true
+VIEWPORT_SIZE = MONITOR_RESOLUTION
+FULLSCREEN = true
 # VIEWPORT_SIZE = if SHORT_CIRCUIT then MONITOR_RESOLUTION * 0.5 else MONITOR_RESOLUTION end
-FULLSCREEN = !SHORT_CIRCUIT
+# FULLSCREEN = !SHORT_CIRCUIT
 UI_TEXT_HEIGHT = VIEWPORT_SIZE.y / 16
 VIEWPORT_CENTER = VIEWPORT_SIZE / 2
 VIEWPORT_CENTER_LEFT = Vector[UI_TEXT_HEIGHT, VIEWPORT_SIZE.y * 0.5]
@@ -25,4 +27,9 @@ module Assets # preload all game assets into global constants
   THEME_SONG = Gosu::Song.new("assets/theme.ogg")
   JINGLE     = Gosu::Song.new("assets/jingle.ogg")
   UI_FONT    = Gosu::Font.new(UI_TEXT_HEIGHT.to_i, name: "assets/retganon.ttf")
+
+  ROAD       = Marshal::load(File.read("road.path"))
 end
+
+srand 1234
+

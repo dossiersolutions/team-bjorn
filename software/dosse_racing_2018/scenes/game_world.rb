@@ -11,6 +11,15 @@ class GameWorld < EntitySystem
     @entities << PLAYER
     @entities << CAMERA
     @entities << WORLDGEN
+    @entities << PathRecorder.new if DEV_MODE
+
+    Assets::ROAD.map do |pos|
+      segment = RoadSegment.new(pos)
+      @entities << segment
+      segment
+    end.each_cons(2) do |a, b|
+      a.next = b
+    end
   end
 
   def draw

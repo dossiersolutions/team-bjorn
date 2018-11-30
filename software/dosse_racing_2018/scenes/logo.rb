@@ -10,7 +10,7 @@ class LogoScene
   def update(dt)
     @time += dt
 
-    if (@time > 26_000) || Gosu.button_down?(Gosu::KB_SPACE)
+    if (@time > 26_000) || Controls.gas?
       return IntroScene.new 
     end
 

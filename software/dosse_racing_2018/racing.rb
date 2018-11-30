@@ -22,6 +22,7 @@ require "./support/constants"
 require "./support/draw"
 require "./support/entity_system"
 require "./support/controls"
+require "./support/path_recorder"
 
 require "./scenes/logo"
 require "./scenes/intro"
