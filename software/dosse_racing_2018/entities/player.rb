@@ -1,19 +1,35 @@
+CONTROLS = Controls.new
+
 class Player
   def initialize
     @position = VIEWPORT_CENTER
     @velocity = Vector[0, 0.0000001]
     @facing_angle = 0
-    @controls = Controls.new
     @car_scale = 1
     @exhaust_time_consumed = 0
     @time = 0
+    @dead = false
+    @dead_for = 0
   end
 
   attr_reader :position
 
   def update(dt, entities)
-    @controls.update(dt)
+    CONTROLS.update(dt)
+
     @time += dt
+
+    if @dead
+      DATA[:big_text] = "You drove into a tree, you one-legged imbecile excuse of a dork."
+      @dead_for += dt
+
+      if @dead_for > 3000
+        initialize
+        DATA[:big_text] = nil
+      end
+
+      return
+    end
 
     # steering
 
@@ -21,8 +37,8 @@ class Player
     @facing_angle -= turn_amount if Gosu.button_down?(Gosu::KB_LEFT)
     @facing_angle += turn_amount if Gosu.button_down?(Gosu::KB_RIGHT)
 
-    if @controls.button_gas? # turn towards pot controlled target
-      degrees_difference = (@controls.button_target_angle - @facing_angle) % 360
+    if CONTROLS.button_gas? # turn towards pot controlled target
+      degrees_difference = (CONTROLS.button_target_angle - @facing_angle) % 360
       if degrees_difference > 180
         @facing_angle -= turn_amount if degrees_difference - turn_amount > 180
       else
@@ -46,7 +62,7 @@ class Player
 
     @force = Vector[0, 0]
     possible_acceleration = Vector.from_angle(@facing_angle, 0.0022)
-    @force += possible_acceleration if @controls.keyboard_gas? || @controls.button_gas?
+    @force += possible_acceleration if CONTROLS.keyboard_gas? || CONTROLS.button_gas?
     @force += friction
 
 
@@ -58,7 +74,7 @@ class Player
     # spawn exhaust fumes
 
     while @exhaust_time_consumed < @time
-      giving_gas = @controls.keyboard_gas? || @controls.button_gas?
+      giving_gas = CONTROLS.keyboard_gas? || CONTROLS.button_gas?
       @exhaust_time_consumed += if giving_gas then 10 else 100 end
       entities.add(ExhaustCloud.new(@position + Vector.from_angle(@facing_angle, -50 + Gosu.random(-10, 10)) + Vector.random(@velocity.magnitude * 10), giving_gas))
     end
@@ -69,15 +85,26 @@ class Player
 
     # export data used by ui
     DATA[:player_kph] = @velocity.magnitude * 120
+
+    entities.collideables.each do |entity|
+      if  (
+        @position.x > entity.hitbox[0].x &&
+        @position.x < entity.hitbox[1].x &&
+        @position.y > entity.hitbox[0].y &&
+        @position.y < entity.hitbox[1].y
+      )
+      @dead = true
+      end
+    end
   end
 
   def draw(millis)
     # Assets::SUV.draw_rot(@position.x, @position.y, 1, @velocity.angle + 90, 0.5, 0.5 @car_scale, @car_scale)
     Assets::SUV.draw_rot(@position.x, @position.y, 1, @facing_angle + 90, 0.5, 0.5, @car_scale, @car_scale)
 
-    if @controls.button_gas?
+    if CONTROLS.button_gas?
     end
-    target_indicator_pos = @position + Vector.from_angle(@controls.button_target_angle, @car_scale * 100)
-    draw_triangle(target_indicator_pos, 15, Gosu::Color::argb(1000 - @controls.time_since_last_button_use * 0.3, 0, 255, 100))
+    target_indicator_pos = @position + Vector.from_angle(CONTROLS.button_target_angle, @car_scale * 100)
+    draw_triangle(target_indicator_pos, 15, Gosu::Color::argb(1000 - CONTROLS.time_since_last_button_use * 0.3, 0, 255, 100))
   end
 end

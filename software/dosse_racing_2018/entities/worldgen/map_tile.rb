@@ -14,14 +14,14 @@ class MapTile
     @trees = (1..tree_count).map do
       tree = Tree.new(@topleft + TILE_DIMENSIONS.mult_each(Vector.rng_random(rng)))
       entities.add tree
-      SPATIAL_INDEX.add(tree)
+      # SPATIAL_INDEX.add(tree)
       tree
     end
   end
 
   def teardown(entities)
     @trees.each do |tree|
-      SPATIAL_INDEX.remove(tree)
+      # SPATIAL_INDEX.remove(tree)
       entities.kill tree
     end
   end

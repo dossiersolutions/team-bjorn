@@ -3,9 +3,11 @@ class EntitySystem
   def initialize
     @entities = Set[]
     @_time = 0
+
+    @collideables = Set[]
   end
 
-  attr_reader :entities
+  attr_reader :entities, :collideables
 
   def update(dt)
     @birth_list = []
@@ -25,9 +27,11 @@ class EntitySystem
 
   def add(entity)
     @birth_list << entity
+    @collideables << entity if entity.respond_to? :hitbox
   end
 
   def kill(entity)
     @kill_list << entity
+    @collideables.delete(entity) if entity.respond_to? :hitbox
   end
 end

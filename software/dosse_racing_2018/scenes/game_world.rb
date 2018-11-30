@@ -3,7 +3,7 @@ Dir["./entities/**/*.rb"].each {|file| require file }
 PLAYER = Player.new
 CAMERA = Camera.new
 WORLDGEN = WorldGen.new
-SPATIAL_INDEX = SpatialIndex.new
+# SPATIAL_INDEX = SpatialIndex.new
 
 class GameWorld < EntitySystem
   def initialize
@@ -25,11 +25,17 @@ class GameWorld < EntitySystem
     CAMERA.apply do
       super
 
-      SPATIAL_INDEX.each_neighbor(PLAYER.position, 20) do |entity|
-        fail "YOU DEAD. HIT BY TREE."
-      end
+      pine_adjusted_position = PLAYER.position + Vector[Assets::PINE.width * 4 * 0.5, -Assets::PINE.height * 4]
+
+      # SPATIAL_INDEX.each_neighbor(pine_adjusted_position, 60.0) do |entity|
+      #   fail "YOU DEAD. HIT BY TREE."
+      # end
     end
 
     Assets::UI_FONT.draw_text("#{DATA[:player_kph].to_i} kph", *UI_TEXT_TOP_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
+
+    if DATA[:big_text]
+      Assets::UI_FONT.draw_text(DATA[:big_text], *VIEWPORT_CENTER_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(255, 255, 100, 0))
+    end
   end
 end
