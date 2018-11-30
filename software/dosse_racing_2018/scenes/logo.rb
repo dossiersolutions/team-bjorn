@@ -10,7 +10,7 @@ class LogoScene
   def update(dt)
     @time += dt
 
-    if (@time > 26_000) || Controls.gas?
+    if (@time > 26_000) || CONTROLS.gas?
       return IntroScene.new 
     end
 

@@ -1,5 +1,5 @@
 MONITOR_RESOLUTION = Vector[Gosu::screen_width * 1.0, Gosu::screen_height * 1.0]
-SHORT_CIRCUIT = true
+SHORT_CIRCUIT = false
 DEV_MODE = true
 VIEWPORT_SIZE = MONITOR_RESOLUTION
 FULLSCREEN = true
