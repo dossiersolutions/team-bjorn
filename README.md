@@ -13,6 +13,11 @@
 
 All the numbers are network order, unsigned, 16-bit integers.
 
+#### Deploying latest version to server
+
+* Push changes to server
+* `ruby deploy.rb <OPTIONAL GIT REFSPEC>`
+
 #### ButtonEmulator.java
 
 Software implementation of the button. Should work anywhere by running `javac ButtonEmulator.java` and `java ButtonEmulator`.
