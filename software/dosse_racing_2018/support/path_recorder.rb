@@ -1,5 +1,5 @@
 class PathRecorder
-  FRAME_LENGTH = 300
+  FRAME_LENGTH = 17
 
   def initialize()
     @frames = []
@@ -12,11 +12,11 @@ class PathRecorder
     while @time > FRAME_LENGTH
       @time -= FRAME_LENGTH
 
-      @frames << PLAYER.position.to_a
+      # @frames << [PLAYER.position.to_a, PLAYER.angle]
     end
 
     # if Gosu.button_down?(Gosu::KB_R)
-    #   File.write("road.path", Marshal.dump(@frames))
+    #   File.write("hanses.enemy", Marshal.dump(@frames))
     # end
   end
 

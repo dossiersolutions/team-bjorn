@@ -100,11 +100,11 @@ class Player
 
   def draw(millis)
     # Assets::SUV.draw_rot(@position.x, @position.y, 1, @velocity.angle + 90, 0.5, 0.5 @car_scale, @car_scale)
-    Assets::SUV.draw_rot(@position.x, @position.y, 1, @facing_angle + 90, 0.5, 0.5, @car_scale, @car_scale)
+    Assets::SUV.draw_rot(@position.x, @position.y, 50, @facing_angle + 90, 0.5, 0.5, @car_scale, @car_scale)
 
     if CONTROLS.button_gas?
     end
-    target_indicator_pos = @position + Vector.from_angle(CONTROLS.button_target_angle, @car_scale * 100)
-    draw_triangle(target_indicator_pos, 15, Gosu::Color::argb(1000 - CONTROLS.time_since_last_button_use * 0.3, 0, 255, 100))
+    target_indicator_pos = @position + Vector.from_angle(CONTROLS.button_target_angle, @car_scale * 50)
+    draw_triangle(target_indicator_pos, 15, Gosu::Color::argb(1000 - CONTROLS.time_since_last_button_use * 0.3, 0, 255, 10000))
   end
 end

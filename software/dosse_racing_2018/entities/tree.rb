@@ -16,6 +16,6 @@ class Tree
   def draw(millis)
     # draw_triangle(@position, 15, Gosu::Color::GREEN)
     color = Gosu::Color::rgb(255, 255, 255)
-    Assets::PINE.draw(*@position, 30, SCALE, SCALE, color)
+    Assets::PINE.draw(*@position, 100, SCALE, SCALE, color)
   end
 end
