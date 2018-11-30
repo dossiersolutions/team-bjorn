@@ -6,7 +6,7 @@
 	},
 	"triggers": [
 		{
-			"cond": 
+			"cond":
 				{
 				  "event": "button_down"
 				}
@@ -19,7 +19,7 @@
 			]
 		},
 		{
-			"cond": 
+			"cond":
 				{
 					"event": "pot_q_change"
 				}
@@ -32,7 +32,7 @@
 			]
 		},
 		{
-			"cond": 
+			"cond":
 				{
 					"operator": ">",
 					"field": "pot_state",

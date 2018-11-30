@@ -78,7 +78,7 @@ def eval_actions(actions, msg)
   end
 end
 
-server = TCPServer.open(38911) 
+server = TCPServer.new("0.0.0.0", 38911)
 puts "Team Bjørn button server listening..."
 
 msg = nil

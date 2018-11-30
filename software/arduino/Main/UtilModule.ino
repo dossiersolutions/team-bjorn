@@ -1,13 +1,26 @@
-void log(String name, int value){
-  if(DEBUG){
+void log(boolean debugEnabled, String name){
+  if(DEBUG && debugEnabled){
+    Serial.print(name);
+  }
+}
+
+void log(boolean debugEnabled, String name, int value){
+  if(DEBUG && debugEnabled){
     Serial.print(name);
     Serial.print(": ");
     Serial.println(value);
   }
 }
 
-void logString(String name, char* value){
-  if(DEBUG){
+void logString(boolean debugEnabled, String name, char* value){
+  if(DEBUG && debugEnabled){
+    Serial.print(name);
+    Serial.print(": ");
+    Serial.println(value);
+  }
+}
+void logUint(boolean debugEnabled, String name, uint16_t value){
+  if(DEBUG && debugEnabled){
     Serial.print(name);
     Serial.print(": ");
     Serial.println(value);
@@ -22,3 +35,4 @@ int getMedian(int a, int b , int c) {
     if(x*z > 0) return c;
     return a;
 }
+

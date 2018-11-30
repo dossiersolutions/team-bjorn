@@ -35,7 +35,7 @@ public class ButtonEmulator extends JFrame implements ChangeListener {
     int port = Integer.parseInt(hostAndPort[1]);
 
     messageCounter++;
-    
+
     valueLabel.setText(
         "msg: " + messageCounter + " pot: " + potentiometerValue + " qpot: " + quantizedPotentiometerValue + " " + (buttonIsPressed ? "Pressed." : "Not pressed."));
 

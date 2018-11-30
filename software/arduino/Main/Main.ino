@@ -11,12 +11,23 @@ void setup() {
   PotentiometerModuleInit();
   LedArrayModuleInit();
 
-  NetworkModuleConnect("Fryden58HO305", "99535552");
+  NetworkModuleConnect();
 }
 
  
 void loop() {
-  MainButtonModuleLedSync();
-  PotentiometerModuleLedSync();
+  if(NetworkModuleIsConnected()){
+    // read and store values
+    MainButtonModuleValueSync();
+    PotentiometerModuleValueSync();
+  
+    // synchronize values and lights
+    if(MainButtonModuleGetValue() == LOW){
+      PotentiometerModuleLedSync();
+    }
+    MainButtonModuleLedSync();
+
+    NetworkModuleSync();
+  }
   delay(10);
 }

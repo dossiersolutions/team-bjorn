@@ -1,28 +1,51 @@
+#define DEBUG_MAIN_BUTTON_MODULE false
+
 #define PIN_MAIN_BUTTON_LED 13
 #define PIN_MAIN_BUTTON 5
 
-#define DEBUG_MAIN_BUTTON false
+#define MAIN_BUTTON_USE_BACKLIGHT true
+#define MAIN_BUTTON_USE_LED_ARRAY true
+
+int mainButtonValue = 0;
+int mainButtonValueLast = 0;
 
 void MainButtonModuleInit(){
   pinMode(PIN_MAIN_BUTTON, INPUT);
   pinMode(PIN_MAIN_BUTTON_LED, OUTPUT);
 }
 
-void MainButtonModuleNetworkSync(){
-  int mainButtonValue = digitalRead(PIN_MAIN_BUTTON);
- 
+int MainButtonModuleHasValueChanged(){
+  return mainButtonValue != mainButtonValueLast;
 }
-  
+
+int MainButtonModuleGetValue(){
+ return mainButtonValue;
+}
+
+void MainButtonModuleValueSync(){
+  mainButtonValueLast = mainButtonValue;
+  log(DEBUG_MAIN_BUTTON_MODULE, F("mainButtonValue"), mainButtonValue);
+  mainButtonValue = MainButtonModuleReadValue();
+}
+
 void MainButtonModuleLedSync(){  
-  int mainButtonValue = digitalRead(PIN_MAIN_BUTTON);
-  if(DEBUG_MAIN_BUTTON){
-    log(F("mainButtonValue"), mainButtonValue);
+  // sync backlight
+  if(MAIN_BUTTON_USE_BACKLIGHT){
+    int mainButtonValue = MainButtonModuleGetValue();
+    digitalWrite(PIN_MAIN_BUTTON_LED, mainButtonValue);
   }
-  int mainButtonLedValue = mainButtonValue;
-  if(DEBUG_MAIN_BUTTON){
-    log(F("mainButtonLedValue"), mainButtonLedValue);
+
+  // sync led array
+  if(MAIN_BUTTON_USE_LED_ARRAY){
+    if(mainButtonValue == HIGH){
+      LedArrayModuleFullWithout(COLOR_WHITE, PotentiometerModuleGetStepValue() - 1);
+    }
   }
-  digitalWrite(PIN_MAIN_BUTTON_LED, mainButtonLedValue);
+}
+
+int MainButtonModuleReadValue(){
+  int value = digitalRead(PIN_MAIN_BUTTON);
+  return value;
 }
 
 void MainButtonModuleLedSuccess(){  
