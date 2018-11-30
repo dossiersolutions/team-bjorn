@@ -21,6 +21,19 @@
 		{
 			"cond": 
 				{
+					"event": "pot_q_change"
+				}
+			,
+			"actions": [
+				{
+					"type": "log",
+					"message": "quantized pot changed: $pot_q_state"
+				}
+			]
+		},
+		{
+			"cond": 
+				{
 					"operator": ">",
 					"field": "pot_state",
 					"value": 1000

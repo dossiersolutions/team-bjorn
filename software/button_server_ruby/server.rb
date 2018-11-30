@@ -12,9 +12,14 @@ end
 
 module CondEval
   def self.event(cond, msg, prev_msg)
+    return false if !prev_msg
+
     case cond["event"]
+    when "pot_change"
+      return msg.pot_state != prev_msg.pot_change
+    when "pot_q_change"
+      return msg.pot_q_state != prev_msg.pot_q_state
     when "button_down"
-      return false if !prev_msg
       return (msg.button_state == 1) && (prev_msg.button_state == 0)
     else
       throw "invalid event kind #{cond["event"]}"
