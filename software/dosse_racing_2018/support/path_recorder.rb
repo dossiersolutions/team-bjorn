@@ -15,9 +15,9 @@ class PathRecorder
       @frames << PLAYER.position.to_a
     end
 
-    if Gosu.button_down?(Gosu::KB_R)
-      File.write("road.path", Marshal.dump(@frames))
-    end
+    # if Gosu.button_down?(Gosu::KB_R)
+    #   File.write("road.path", Marshal.dump(@frames))
+    # end
   end
 
   def draw(time)
