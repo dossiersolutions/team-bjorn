@@ -20,7 +20,7 @@ class Player
     @time += dt
 
     if @dead
-      DATA[:big_text] = "You drove into a tree, you one-legged imbecile excuse for a dork."
+      DATA[:big_text] = "You lost the race, you one-legged excuse for a dork."
       @dead_for += dt
 
       if @dead_for > 3000
@@ -93,7 +93,8 @@ class Player
         @position.y > entity.hitbox[0].y &&
         @position.y < entity.hitbox[1].y
       )
-      @dead = true
+        distance = (entity.position - @position)
+        @velocity = distance.normalize * @velocity.magnitude
       end
     end
   end
