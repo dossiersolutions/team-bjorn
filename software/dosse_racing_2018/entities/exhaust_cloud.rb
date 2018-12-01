@@ -31,7 +31,7 @@ class ExhaustCloud
     opacity = [norm_age * 400, (1-norm_age) * 400, 80].min
     # color = Gosu::Color::argb(, @lightness, @lightness, @lightness)
     scale = norm_age * (if @giving_gas then 20 else 15 end) * 0.1
-    @image.draw(*@position, 30, scale, scale, Gosu::Color::argb(opacity, 255, 255, 255))
+    @image.draw(*@position, 200, scale, scale, Gosu::Color::argb(opacity, 255, 255, 255))
     # draw_triangle(@position, norm_age * (if @giving_gas then 20 else 15 end), color, 30, @mode)
   end
 end
