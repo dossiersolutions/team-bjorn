@@ -11,23 +11,26 @@ void setup() {
   PotentiometerModuleInit();
   LedArrayModuleInit();
 
-  NetworkModuleConnect();
+  NetworkModuleConnect(true);
 }
 
  
 void loop() {
-  if(NetworkModuleIsConnected()){
+//  if(NetworkModuleIsConnected()){
     // read and store values
     MainButtonModuleValueSync();
     PotentiometerModuleValueSync();
-  
+
+    // update the brightness of ledArray based on the input
+    LedArrayBrightnesSync();
     // synchronize values and lights
-    if(MainButtonModuleGetValue() == LOW){
-      PotentiometerModuleLedSync();
-    }
+    PotentiometerModuleLedSync();
     MainButtonModuleLedSync();
 
+    NetworkModulePowerSaveSync();
+
+    // sync state with button server
     NetworkModuleSync();
-  }
+//  }
   delay(10);
 }

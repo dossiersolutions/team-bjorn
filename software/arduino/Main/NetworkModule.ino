@@ -1,12 +1,12 @@
 #include <ESP8266WiFi.h>
 
-#define DEBUG_NETWORK_MODULE false
+#define DEBUG_NETWORK_MODULE true
 
 #define NETWORK_MODULE_CONNECT_TIMEOUT 10000
-#define NETWORK_MODULE_CONNECT_SLEEP 100
+#define NETWORK_MODULE_CONNECT_SLEEP 1
 
 #define NETWORK_MODULE_SERVER_CONNECT_TIMEOUT 200
-#define NETWORK_MODULE_SERVER_CONNECT_ERROR_TIMEOUT 4000
+#define NETWORK_MODULE_SERVER_CONNECT_ERROR_TIMEOUT 10000
 
 #define NETWORK_MODULE_SSID "Fryden58HO305"
 #define NETWORK_MODULE_PASSWORD "99535552"
@@ -16,33 +16,88 @@
 uint16_t messageCounter = 0;
 int errorTime = 0;
 
-void NetworkModuleConnect() {
-  LedArrayModuleClear();
-  LedArrayModuleLoading();
+void NetworkModuleConnect(boolean ledFeedback) {
+  log(DEBUG_NETWORK_MODULE, F("connecting to wifi "));
+  if(ledFeedback){
+    LedArrayModuleClear();
+  }
   WiFi.begin(NETWORK_MODULE_SSID, NETWORK_MODULE_PASSWORD);
   int connectingTime = 0;
   while (!NetworkModuleIsConnected() && connectingTime <= NETWORK_MODULE_CONNECT_TIMEOUT) {
     delay(NETWORK_MODULE_CONNECT_SLEEP);
     connectingTime += NETWORK_MODULE_CONNECT_SLEEP;
-    LedArrayModuleLoading();
+    if(ledFeedback){
+      LedArrayModuleLoading();
+    }
   }
-  LedArrayModuleClear();
-  delay(200);
+  if(ledFeedback){
+    LedArrayModuleClear();
+    delay(200);
+  }
   
   boolean connected = NetworkModuleIsConnected();
   if (connected) {
-    LedArrayModuleSuccess();
-    LedArrayModuleClear();
+    if(ledFeedback){
+      LedArrayModuleSuccess();
+      LedArrayModuleClear();
+    }
+    log(DEBUG_NETWORK_MODULE, F("connected \n"));
   } else {
-    LedArrayModuleError();
+    if(ledFeedback){
+      LedArrayModuleError();
+    }
+    log(DEBUG_NETWORK_MODULE, F("error \n"));
+  }
+  connectingTime = 0;
+}
+
+//int nonBlockingLed = 0;
+//boolean NetworkModuleNonBlockingConnect() {
+//  log(DEBUG_NETWORK_MODULE, F("connecting to wifi "));
+//  LedArrayModuleClear();
+//
+//  WiFi.begin(NETWORK_MODULE_SSID, NETWORK_MODULE_PASSWORD);
+//  delay(NETWORK_MODULE_CONNECT_SLEEP);
+//  connectingTime += NETWORK_MODULE_CONNECT_SLEEP;
+//
+//  if(connectingTime%500 == 0){
+//    LedArrayModuleSingleColor(COLOR_WHITE, nonBlockingLed++);
+//  }
+//
+//  boolean connected = NetworkModuleIsConnected();
+//  return connected;
+//}
+
+void  NetworkModulePowerSaveSync(){
+  int timeFromLastPotentiometerChange = millis() - PotentiometerModuleGetLastValueChangeTime();
+  int timeFromLastButtonChange = millis() - MainButtonModuleGetLastValueChangeTime();
+  int timeFromLastChange = min(timeFromLastPotentiometerChange, timeFromLastButtonChange);
+  int hasInputChanged = MainButtonModuleHasValueChanged() || PotentiometerModuleHasValueChanged();
+
+  if(hasInputChanged){
+    if(WiFi.getMode() == 0){ //WIFI_OFF
+      WiFi.forceSleepWake();
+      delay(1);
+      log(DEBUG_NETWORK_MODULE, F("turning on the wifi \n"));
+      WiFi.mode(WIFI_STA);
+      NetworkModuleConnect(false);
+    }
+  }
+  
+  if(timeFromLastChange > LED_ARRAY_POWER_SAVING_TIMEOUT){
+    if(WiFi.getMode() == 1){ //WIFI_STA
+      log(DEBUG_NETWORK_MODULE, F("turning off the wifi \n"));
+      WiFi.mode(WIFI_OFF);
+      delay(100);
+      WiFi.forceSleepBegin();
+      delay(100);
+    }
   }
 }
 
 void NetworkModuleSync() {
   boolean buttonChanged = MainButtonModuleHasValueChanged();
-  log(DEBUG_NETWORK_MODULE, F("buttonChanged"), buttonChanged);
   boolean potentiometerChanged = PotentiometerModuleHasValueChanged();
-  log(DEBUG_NETWORK_MODULE, F("potentiometerChanged"), potentiometerChanged);
   if (buttonChanged || potentiometerChanged) {
     uint16_t id = 11;
     uint16_t buttonValue = (uint16_t) MainButtonModuleGetValue();
@@ -63,9 +118,9 @@ void NetworkModuleSendStatusMessage(uint16_t id, uint16_t messageCounter, uint16
   // send message
   WiFiClient client;
   client.setTimeout(NETWORK_MODULE_SERVER_CONNECT_TIMEOUT);
-  log(DEBUG_NETWORK_MODULE, F("connectingToClient "));
+  log(DEBUG_NETWORK_MODULE, F("connectingToServer "));
   if (client.connect(NETWORK_MODULE_SERVER, NETWORK_MODULE_SERVER_PORT)) {
-    log(DEBUG_NETWORK_MODULE, F("OK"));
+    log(DEBUG_NETWORK_MODULE, F("OK \n"));
     uint8_t data[10];
     data[0] = (uint8_t) (id >> 8);
     data[1] = (uint8_t) (id & 0xff);
@@ -85,7 +140,7 @@ void NetworkModuleSendStatusMessage(uint16_t id, uint16_t messageCounter, uint16
     client.write(data, 10);
     client.flush();
   } else {
-    log(DEBUG_NETWORK_MODULE, F("ERROR"));
+    log(DEBUG_NETWORK_MODULE, F("ERROR\n"));
     errorTime = millis();
     LedArrayModuleError();
   }

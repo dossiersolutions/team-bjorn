@@ -6,12 +6,17 @@
 #define MAIN_BUTTON_USE_BACKLIGHT true
 #define MAIN_BUTTON_USE_LED_ARRAY true
 
+int mainButtonLastValueChangeTime = 0;
 int mainButtonValue = 0;
 int mainButtonValueLast = 0;
 
 void MainButtonModuleInit(){
   pinMode(PIN_MAIN_BUTTON, INPUT);
   pinMode(PIN_MAIN_BUTTON_LED, OUTPUT);
+}
+
+int MainButtonModuleGetLastValueChangeTime(){
+  return mainButtonLastValueChangeTime;
 }
 
 int MainButtonModuleHasValueChanged(){
@@ -26,6 +31,9 @@ void MainButtonModuleValueSync(){
   mainButtonValueLast = mainButtonValue;
   log(DEBUG_MAIN_BUTTON_MODULE, F("mainButtonValue"), mainButtonValue);
   mainButtonValue = MainButtonModuleReadValue();
+  if(mainButtonValueLast != mainButtonValue){
+    mainButtonLastValueChangeTime = millis();
+  }
 }
 
 void MainButtonModuleLedSync(){  

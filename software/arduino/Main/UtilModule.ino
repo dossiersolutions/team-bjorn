@@ -27,6 +27,20 @@ void logUint(boolean debugEnabled, String name, uint16_t value){
   }
 }
 
+int nonBlockingDelayStartTime = 0;
+
+boolean nonBlockingDelay(int time){
+  if(nonBlockingDelayStartTime == 0){
+    nonBlockingDelayStartTime = millis();
+    return false;
+  }
+  if(millis() > nonBlockingDelayStartTime + time){
+    nonBlockingDelayStartTime = 0;
+    return true;
+  }
+  return false;
+}
+
 int getMedian(int a, int b , int c) {
     int x = a-b;
     int y = b-c;

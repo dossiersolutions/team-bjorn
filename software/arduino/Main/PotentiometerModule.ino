@@ -31,21 +31,16 @@ int PotentiometerModuleGetStepValue(){
 
 void PotentiometerModuleLedSync(){
   int potentiometerStep = PotentiometerModuleGetStepValue();
-  int timeFromLastChange = millis() - PotentiometerModuleGetLastValueChangeTime();
-
-  if(timeFromLastChange < 2000){
-    LedArrayModuleSetBrightness(LED_ARRAY_MAX_BRIGHTNESS);
-  }
-  else{
-    LedArrayModuleSetBrightness(LED_ARRAY_MIN_BRIGHTNESS);
-  }
-  
   int ledNumber = potentiometerStep - 1;
   if(ledNumber >= 0){
-    LedArrayModuleClearOthersThan(ledNumber);
+    if(MainButtonModuleGetValue() == LOW){
+      LedArrayModuleClearOthersThan(ledNumber);
+    }
     LedArrayModuleSingleColorPredefined(ledNumber);
   }else{
-    LedArrayModuleClear();
+    if(MainButtonModuleGetValue() == LOW){
+      LedArrayModuleClear();
+    }
   }
 }
 

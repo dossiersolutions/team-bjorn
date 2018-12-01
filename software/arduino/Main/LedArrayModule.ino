@@ -3,8 +3,9 @@
 #define LED_ARRAY_NUM_PIXELS  8
 
 #define LED_ARRAY_SUPER_BRIGHTNESS 100
-#define LED_ARRAY_MAX_BRIGHTNESS 50
+#define LED_ARRAY_MAX_BRIGHTNESS 15
 #define LED_ARRAY_MIN_BRIGHTNESS 1
+#define LED_ARRAY_POWER_SAVING_TIMEOUT 30000
 
 #define COLOR_NULL 0x000000
 #define COLOR_LIME 0x00FF00
@@ -24,6 +25,22 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_ARRAY_NUM_PIXELS, PIN_LED_ARRAY,
 
 void LedArrayModuleInit() {
   strip.begin();
+}
+
+void LedArrayBrightnesSync(){
+  int timeFromLastPotentiometerChange = millis() - PotentiometerModuleGetLastValueChangeTime();
+  int timeFromLastButtonChange = millis() - MainButtonModuleGetLastValueChangeTime();
+
+  int timeFromLastChange = min(timeFromLastPotentiometerChange, timeFromLastButtonChange);
+  if(timeFromLastChange < 2000){
+    LedArrayModuleSetBrightness(LED_ARRAY_MAX_BRIGHTNESS);
+  }
+  else if (timeFromLastChange < LED_ARRAY_POWER_SAVING_TIMEOUT){
+    LedArrayModuleSetBrightness(LED_ARRAY_MIN_BRIGHTNESS);
+  }
+  else{
+    LedArrayModuleSetBrightness(0);
+  }
 }
 
 void LedArrayModuleClear(){
