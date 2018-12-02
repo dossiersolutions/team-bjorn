@@ -1,7 +1,7 @@
 #define PIN_POTENTIOMETER A0
-#define POTENTIOMETER_MODULE_STABILIZATION_DIFF 10
+#define POTENTIOMETER_MODULE_STABILIZATION_DIFF 24
 
-#define DEBUG_POTENTIOMETER_MODULE false
+#define DEBUG_POTENTIOMETER_MODULE true
 
 int potentiometerLastValueChangeTime = 0;
 int potentiometerLastReading = 0;
@@ -41,16 +41,22 @@ void PotentiometerModuleLedSync(){
     if(MainButtonModuleGetValue() == LOW){
       LedArrayModuleClear();
     }
-  }
+  } 
 }
 
 void PotentiometerModuleValueSync(){
-  int potentiometerValueMedian = PotentiometerModuleReadMedianValue();
-  log(DEBUG_POTENTIOMETER_MODULE, F("potentiometerValueMedian"), potentiometerValueMedian);
-  int potentiometerValueStabilized = PotentiometerModuleStabilizeValue(potentiometerValueMedian);
+  int potentiometerValueRaw = analogRead(PIN_POTENTIOMETER);
+  log(DEBUG_POTENTIOMETER_MODULE, F("potentiometerValueRaw"), potentiometerValueRaw);
+  
+  int potentiometerValueAverage = PotentiometerModuleReadAverageValue();
+  log(DEBUG_POTENTIOMETER_MODULE, F("potentiometerValueAverage"), potentiometerValueAverage);
+  
+  int potentiometerValueStabilized = PotentiometerModuleStabilizeValue(potentiometerValueAverage);
   log(DEBUG_POTENTIOMETER_MODULE, F("potentiometerValueStabilized"), potentiometerValueStabilized);
+  
   int potentiometerValueNormalized = PotentiometerModuleNormalizeValue(potentiometerValueStabilized);
   log(DEBUG_POTENTIOMETER_MODULE, F("potentiometerValueNormalized"), potentiometerValueNormalized);
+  
   int potentiometerStepValueCalc = PotentiometerModuleConvertValueToStep(potentiometerValueNormalized);
   log(DEBUG_POTENTIOMETER_MODULE, F("potentiometerStepValueCalc"), potentiometerStepValueCalc);
   
@@ -59,10 +65,17 @@ void PotentiometerModuleValueSync(){
   potentiometerStepValue = potentiometerStepValueCalc;
 }
 
-int PotentiometerModuleReadMedianValue(){
-  int potentiometerValueMedian = getMedian(analogRead(PIN_POTENTIOMETER), analogRead(PIN_POTENTIOMETER), analogRead(PIN_POTENTIOMETER));
-  return potentiometerValueMedian;
+int PotentiometerModuleReadAverageValue(){  
+  int averageCount = 10;
+  int average = 0;
+  for(int i = 0; i < averageCount; ++i){
+    average += analogRead(PIN_POTENTIOMETER);
+    delay(1);
+  }
+  return average/averageCount;
 }
+
+
 
 int PotentiometerModuleStabilizeValue(int value){ 
   int difference = abs(value - potentiometerLastReading);
@@ -78,7 +91,7 @@ int PotentiometerModuleStabilizeValue(int value){
 }
 
 int PotentiometerModuleNormalizeValue(int value){ 
-  float valueFloat = (1023.0/(845.0 - 16)) * (value - 16);
+  float valueFloat = (1023.0/(857.0 - 16)) * (value - 16);
   int valueInt = (int) valueFloat;
   if(valueInt > 1023){
     valueInt = 1023;
@@ -91,8 +104,41 @@ int PotentiometerModuleNormalizeValue(int value){
 
 // returns value from 0 to 8 with every step taking cca 113 range
 int PotentiometerModuleConvertValueToStep(int value){
-  float divider = 1024.0/9.0;
+  float divider = 1023.0/9.0;
   int stepValue = value/divider;
   return stepValue <= 8 ? stepValue : 8;
 }
+
+
+//const int runningAverageCount = 5;
+//int runningAverageBuffer[runningAverageCount];
+//int nextRunningAverage;
+// 
+//int PotentiometerModuleReadRunningAverageValue(int value){
+//  runningAverageBuffer[nextRunningAverage++] = value;
+//  if (nextRunningAverage >= runningAverageCount){
+//    nextRunningAverage = 0; 
+//  }
+//  int runningAverage = 0;
+//  for(int i = 0; i < runningAverageCount; ++i){
+//    runningAverage += runningAverageBuffer[i];
+//  }
+//  return runningAverage / runningAverageCount;
+//}
+
+//int PotentiometerModuleReadMedianValue(){
+//  int potentiometerValueMedian = getMedian(analogRead(PIN_POTENTIOMETER), analogRead(PIN_POTENTIOMETER), analogRead(PIN_POTENTIOMETER));
+//  return potentiometerValueMedian;
+//}
+
+//int runningMedianLast = 0;
+//int runningMedianLastLast = 0;
+// 
+//int PotentiometerModuleReadRunningMedianValue(int value){
+//  int median = getMedian(value, runningMedianLastLast, runningMedianLast);
+//  runningMedianLastLast = runningMedianLast;
+//  runningMedianLast = value;
+//  return median;
+//}
+
 

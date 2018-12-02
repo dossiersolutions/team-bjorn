@@ -1,6 +1,6 @@
 #include <ESP8266WiFi.h>
 
-#define DEBUG_NETWORK_MODULE true
+#define DEBUG_NETWORK_MODULE false
 
 #define NETWORK_MODULE_CONNECT_TIMEOUT 10000
 #define NETWORK_MODULE_CONNECT_SLEEP 1
@@ -16,34 +16,33 @@
 uint16_t messageCounter = 0;
 int errorTime = 0;
 
-void NetworkModuleConnect(boolean ledFeedback) {
+void NetworkModuleConnect(boolean quick) {
   log(DEBUG_NETWORK_MODULE, F("connecting to wifi "));
-  if(ledFeedback){
+  if(!quick){
     LedArrayModuleClear();
   }
+
   WiFi.begin(NETWORK_MODULE_SSID, NETWORK_MODULE_PASSWORD);
   int connectingTime = 0;
   while (!NetworkModuleIsConnected() && connectingTime <= NETWORK_MODULE_CONNECT_TIMEOUT) {
     delay(NETWORK_MODULE_CONNECT_SLEEP);
     connectingTime += NETWORK_MODULE_CONNECT_SLEEP;
-    if(ledFeedback){
-      LedArrayModuleLoading();
-    }
+    LedArrayModuleLoading(quick);
   }
-  if(ledFeedback){
+  if(!quick){
     LedArrayModuleClear();
     delay(200);
   }
   
   boolean connected = NetworkModuleIsConnected();
   if (connected) {
-    if(ledFeedback){
+    if(!quick){
       LedArrayModuleSuccess();
-      LedArrayModuleClear();
     }
+    LedArrayModuleClear();
     log(DEBUG_NETWORK_MODULE, F("connected \n"));
   } else {
-    if(ledFeedback){
+    if(!quick){
       LedArrayModuleError();
     }
     log(DEBUG_NETWORK_MODULE, F("error \n"));
@@ -51,28 +50,12 @@ void NetworkModuleConnect(boolean ledFeedback) {
   connectingTime = 0;
 }
 
-//int nonBlockingLed = 0;
-//boolean NetworkModuleNonBlockingConnect() {
-//  log(DEBUG_NETWORK_MODULE, F("connecting to wifi "));
-//  LedArrayModuleClear();
-//
-//  WiFi.begin(NETWORK_MODULE_SSID, NETWORK_MODULE_PASSWORD);
-//  delay(NETWORK_MODULE_CONNECT_SLEEP);
-//  connectingTime += NETWORK_MODULE_CONNECT_SLEEP;
-//
-//  if(connectingTime%500 == 0){
-//    LedArrayModuleSingleColor(COLOR_WHITE, nonBlockingLed++);
-//  }
-//
-//  boolean connected = NetworkModuleIsConnected();
-//  return connected;
-//}
-
 void  NetworkModulePowerSaveSync(){
   int timeFromLastPotentiometerChange = millis() - PotentiometerModuleGetLastValueChangeTime();
   int timeFromLastButtonChange = millis() - MainButtonModuleGetLastValueChangeTime();
   int timeFromLastChange = min(timeFromLastPotentiometerChange, timeFromLastButtonChange);
-  int hasInputChanged = MainButtonModuleHasValueChanged() || PotentiometerModuleHasValueChanged();
+  boolean hasInputChanged = MainButtonModuleHasValueChanged() || PotentiometerModuleHasValueChanged();
+  boolean isConected = NetworkModuleIsConnected();
 
   if(hasInputChanged){
     if(WiFi.getMode() == 0){ //WIFI_OFF
@@ -80,7 +63,7 @@ void  NetworkModulePowerSaveSync(){
       delay(1);
       log(DEBUG_NETWORK_MODULE, F("turning on the wifi \n"));
       WiFi.mode(WIFI_STA);
-      NetworkModuleConnect(false);
+      NetworkModuleConnect(true);
     }
   }
   
@@ -145,8 +128,6 @@ void NetworkModuleSendStatusMessage(uint16_t id, uint16_t messageCounter, uint16
     LedArrayModuleError();
   }
 }
-
-
 
 boolean NetworkModuleIsConnected() {
   boolean connected = WiFi.status() == WL_CONNECTED;

@@ -3,9 +3,9 @@
 #define LED_ARRAY_NUM_PIXELS  8
 
 #define LED_ARRAY_SUPER_BRIGHTNESS 100
-#define LED_ARRAY_MAX_BRIGHTNESS 15
+#define LED_ARRAY_MAX_BRIGHTNESS 10
 #define LED_ARRAY_MIN_BRIGHTNESS 1
-#define LED_ARRAY_POWER_SAVING_TIMEOUT 30000
+#define LED_ARRAY_POWER_SAVING_TIMEOUT 120000
 
 #define COLOR_NULL 0x000000
 #define COLOR_LIME 0x00FF00
@@ -23,23 +23,34 @@ const int COLORS[8] = {COLOR_GREEN, COLOR_YELLOW, COLOR_PURPLE, COLOR_RED, COLOR
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_ARRAY_NUM_PIXELS, PIN_LED_ARRAY, NEO_GRBW + NEO_KHZ800);
 
+boolean ledArrayPowerSaveMode = false;
+int ledArrayModuleRowUnblockingCount = 0;
+
 void LedArrayModuleInit() {
   strip.begin();
+}
+
+boolean LedArrayIsPowerSaveMode(){
+  return ledArrayPowerSaveMode;
 }
 
 void LedArrayBrightnesSync(){
   int timeFromLastPotentiometerChange = millis() - PotentiometerModuleGetLastValueChangeTime();
   int timeFromLastButtonChange = millis() - MainButtonModuleGetLastValueChangeTime();
-
   int timeFromLastChange = min(timeFromLastPotentiometerChange, timeFromLastButtonChange);
+
   if(timeFromLastChange < 2000){
     LedArrayModuleSetBrightness(LED_ARRAY_MAX_BRIGHTNESS);
+    ledArrayPowerSaveMode = false;
   }
   else if (timeFromLastChange < LED_ARRAY_POWER_SAVING_TIMEOUT){
     LedArrayModuleSetBrightness(LED_ARRAY_MIN_BRIGHTNESS);
+    ledArrayPowerSaveMode = false;
   }
-  else{
+  else if(!ledArrayPowerSaveMode){
+    LedArrayModuleClear();
     LedArrayModuleSetBrightness(0);
+    ledArrayPowerSaveMode = true;
   }
 }
 
@@ -47,6 +58,7 @@ void LedArrayModuleClear(){
    for(int i = 0; i<LED_ARRAY_NUM_PIXELS; i++){ 
     strip.setPixelColor(i, COLOR_NULL); strip.show();
   }
+  ledArrayModuleRowUnblockingCount = 0; // hack
 }
 
 void LedArrayModuleClearOthersThan(int pixelNumber){
@@ -63,6 +75,17 @@ void LedArrayModuleRow(uint16_t speed, uint32_t color){
     strip.show();
     delay(speed);
   }
+}
+
+
+void LedArrayModuleRowUnblocking(uint16_t speed, uint32_t color){
+ if(nonBlockingDelay(speed)){
+    strip.setPixelColor(ledArrayModuleRowUnblockingCount++, color);
+    strip.show();
+ }
+ if(ledArrayModuleRowUnblockingCount > LED_ARRAY_NUM_PIXELS){
+    ledArrayModuleRowUnblockingCount = 0;
+ }
 }
 
 void LedArrayModuleFullWithout(uint32_t color, int pixelNumber){
@@ -88,9 +111,14 @@ void LedArrayModuleSingleBlinking(int pixelNumber, uint32_t color){
   strip.show();
 }
 
-void LedArrayModuleLoading(){
-  LedArrayModuleSetBrightness(LED_ARRAY_SUPER_BRIGHTNESS);
-  LedArrayModuleKnightRider(3, 64, 2, COLOR_WHITE);
+void LedArrayModuleLoading(boolean unblocking){
+  if(!unblocking){
+    LedArrayModuleSetBrightness(LED_ARRAY_SUPER_BRIGHTNESS);
+    LedArrayModuleKnightRider(3, 64, 2, COLOR_WHITE);
+  }
+  else{
+    LedArrayModuleRowUnblocking(500, COLOR_WHITE);   
+  }
 }
 
 void LedArrayModuleSetBrightness(byte brightness){

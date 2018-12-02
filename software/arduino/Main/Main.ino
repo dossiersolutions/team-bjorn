@@ -1,7 +1,6 @@
 #define PIN_BOARD_LED 0
 #define DEBUG true
 
-
 void setup() {
   Serial.begin(115200);
   delay(100);
@@ -11,26 +10,24 @@ void setup() {
   PotentiometerModuleInit();
   LedArrayModuleInit();
 
-  NetworkModuleConnect(true);
+  NetworkModuleConnect(false);
 }
 
  
 void loop() {
-//  if(NetworkModuleIsConnected()){
-    // read and store values
-    MainButtonModuleValueSync();
-    PotentiometerModuleValueSync();
+  // read and store values
+  MainButtonModuleValueSync();
+  PotentiometerModuleValueSync();
 
-    // update the brightness of ledArray based on the input
-    LedArrayBrightnesSync();
-    // synchronize values and lights
-    PotentiometerModuleLedSync();
-    MainButtonModuleLedSync();
+  // update the brightness of ledArray based on the input
+  LedArrayBrightnesSync();
+  // synchronize values and lights
+  PotentiometerModuleLedSync();
+  MainButtonModuleLedSync();
 
-    NetworkModulePowerSaveSync();
+  NetworkModulePowerSaveSync();
 
-    // sync state with button server
-    NetworkModuleSync();
-//  }
+  // sync state with button server
+  NetworkModuleSync();
   delay(10);
 }

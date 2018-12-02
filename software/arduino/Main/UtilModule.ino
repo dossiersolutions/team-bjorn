@@ -7,34 +7,37 @@ void log(boolean debugEnabled, String name){
 void log(boolean debugEnabled, String name, int value){
   if(DEBUG && debugEnabled){
     Serial.print(name);
-    Serial.print(": ");
-    Serial.println(value);
+    Serial.print(",");
+    Serial.print(value);
+    Serial.println(",");
   }
 }
 
 void logString(boolean debugEnabled, String name, char* value){
   if(DEBUG && debugEnabled){
     Serial.print(name);
-    Serial.print(": ");
-    Serial.println(value);
+    Serial.print(",");
+    Serial.print(value);
+    Serial.println(",");
   }
 }
 void logUint(boolean debugEnabled, String name, uint16_t value){
   if(DEBUG && debugEnabled){
     Serial.print(name);
-    Serial.print(": ");
-    Serial.println(value);
+    Serial.print(",");
+    Serial.print(value);
+    Serial.println(",");
   }
 }
 
 int nonBlockingDelayStartTime = 0;
 
-boolean nonBlockingDelay(int time){
+boolean nonBlockingDelay(int delayTime){
   if(nonBlockingDelayStartTime == 0){
     nonBlockingDelayStartTime = millis();
     return false;
   }
-  if(millis() > nonBlockingDelayStartTime + time){
+  if(millis() > nonBlockingDelayStartTime + delayTime){
     nonBlockingDelayStartTime = 0;
     return true;
   }

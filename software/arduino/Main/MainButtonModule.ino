@@ -4,7 +4,7 @@
 #define PIN_MAIN_BUTTON 5
 
 #define MAIN_BUTTON_USE_BACKLIGHT true
-#define MAIN_BUTTON_USE_LED_ARRAY true
+#define MAIN_BUTTON_USE_LED_ARRAY false
 
 int mainButtonLastValueChangeTime = 0;
 int mainButtonValue = 0;
