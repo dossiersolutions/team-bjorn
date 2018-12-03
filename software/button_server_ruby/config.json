@@ -74,6 +74,27 @@
 					"command": "curl http://192.168.29.183:3000/start"
 				}
 			]
+		},
+		{
+			"cond": {
+				"operator": "and",
+				"conds": [
+					{
+						"event": "button_down"
+					},
+					{
+						"operator": "==",
+						"field": "pot_q_state",
+						"value": 7
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "shell",
+					"command": "ssh pi@192.168.29.9 'aplay getupstandup.wav'"
+				}
+			]
 		}
 	]
 }
