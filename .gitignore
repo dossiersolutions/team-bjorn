@@ -1,1 +1,3 @@
-software/ButtonEmulator.class
+.idea
+*.iml
+ButtonEmulator.class

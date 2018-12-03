@@ -1,0 +1,39 @@
+{
+  "version": "0.1",
+  "settings": {
+    "port": 38912
+  },
+  "triggers": [
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "ButtonId",
+            "operator": "In",
+            "values": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "property": "EventType",
+            "operator": "In",
+            "values": [
+              "Init",
+              "ButtonDown",
+              "ButtonUp",
+              "PotentiometerState"
+            ]
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "LogEvent"
+        }
+      ]
+    }
+  ]
+}
