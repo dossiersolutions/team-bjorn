@@ -106,6 +106,7 @@ class Player
 
     entities.collideables.each do |entity|
       if  (
+        entity.respond_to?(:hitbox) &&
         @position.x > entity.hitbox[0].x &&
         @position.x < entity.hitbox[1].x &&
         @position.y > entity.hitbox[0].y &&

@@ -12,7 +12,7 @@ WORLD_ZOOM_VIEWPORT_ADJUSTMENT = VIEWPORT_SIZE.y / 650
 UI_TEXT_TOP_LEFT = Vector[UI_TEXT_HEIGHT * 0.5, UI_TEXT_HEIGHT / 2]
 UI_TEXT_BOTTOM_LEFT = Vector[UI_TEXT_HEIGHT * 0.5, Gosu::screen_height - UI_TEXT_HEIGHT * 1.5]
 SEED = 3
-PERLIN = Perlin::Generator.new SEED, 1.0, 5
+PERLIN_FORESTNESS = Perlin::Generator.new SEED, 1.0, 5
 
 DATA = { # used by entities etc to communicate
 
@@ -25,6 +25,7 @@ module Assets # preload all game assets into global constants
   PINE       = Gosu::Image.new("assets/pine.png")
   WHITE_SOFT = Gosu::Image.new("assets/white_soft_particle.png")
   BLACK_SOFT = Gosu::Image.new("assets/black_soft_particle.png")
+  FLOWERS    = Gosu::Image.load_tiles("assets/flowers_and_stuff.png", 32, 32, retro: true)
   THEME_SONG = Gosu::Song.new("assets/theme.ogg")
   JINGLE     = Gosu::Song.new("assets/jingle.ogg")
   UI_FONT    = Gosu::Font.new(UI_TEXT_HEIGHT.to_i, name: "assets/retganon.ttf")

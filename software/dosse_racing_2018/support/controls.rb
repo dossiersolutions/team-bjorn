@@ -20,7 +20,7 @@ class Controls
         sock = server.accept()
         @message = ButtonMessage.new(*sock.read(10).unpack("n*"))
         @time_since_last_button_use = 0
-        @button_target_angle = @message.pot_state # TODO
+        @button_target_angle = @message.pot_state * 0.5 # TODO
         sock.close()
       end
     end
