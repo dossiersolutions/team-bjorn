@@ -14,6 +14,8 @@ UI_TEXT_BOTTOM_LEFT = Vector[UI_TEXT_HEIGHT * 0.5, Gosu::screen_height - UI_TEXT
 SEED = 3
 PERLIN_FORESTNESS = Perlin::Generator.new SEED, 1.0, 5
 
+ENEMY_FRAME_LENGTH = 17
+
 DATA = { # used by entities etc to communicate
 
 }

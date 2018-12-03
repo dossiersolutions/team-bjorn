@@ -9,6 +9,7 @@ class Player
     @car_scale = 1
     @exhaust_time_consumed = 0
     @time = 0
+    @race_time = 0
     @dead = false
     @dead_for = 0
 
@@ -28,9 +29,11 @@ class Player
     @back_segment = segments.first
     @nearest_segment = segments.first
     @next_segment = segments.first
+
+    @color = Gosu::Color::rgb(0, 0, 255)
   end
 
-  attr_reader :position
+  attr_reader :position, :facing_angle, :color
 
   def update(dt, entities)
     CONTROLS.update(dt)
@@ -74,7 +77,13 @@ class Player
     #   end
     # end
 
+    nearest_segment_distance = @nearest_segment.position - @position
+
     friction = @velocity.normalize * [-0.00025, @velocity.magnitude * -0.001999].min
+
+    if nearest_segment_distance.magnitude > 330
+      friction *= 2.0
+    end
 
     # acceleration
 
@@ -142,12 +151,18 @@ class Player
       @next_segment = @next_segment.next
     end
 
-    DATA[:progress] = @next_segment.index * 1.0 / Assets::ROAD.size
-
     if !@next_segment.next
       # TODO
+    elsif
+      @race_time += dt
     end
 
+    DATA[:race_time] = @race_time
+
+  end
+
+  def progress
+    @next_segment.index * 1.0 / Assets::ROAD.size
   end
 
 

@@ -1,5 +1,4 @@
 class PathRecorder
-  FRAME_LENGTH = 17
 
   def initialize()
     @frames = []
@@ -9,15 +8,15 @@ class PathRecorder
   def update(dt, entities)
     @time += dt
 
-    while @time > FRAME_LENGTH
-      @time -= FRAME_LENGTH
+    while @time > ENEMY_FRAME_LENGTH
+      @time -= ENEMY_FRAME_LENGTH
 
-      # @frames << [PLAYER.position.to_a, PLAYER.angle]
+      @frames << [PLAYER.position.to_a, PLAYER.facing_angle, PLAYER.progress]
     end
 
-    # if Gosu.button_down?(Gosu::KB_R)
-    #   File.write("hanses.enemy", Marshal.dump(@frames))
-    # end
+    if Gosu.button_down?(Gosu::KB_R)
+      File.write("anaaam.enemy", Marshal.dump(@frames))
+    end
   end
 
   def draw(time)
