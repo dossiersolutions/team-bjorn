@@ -28,6 +28,10 @@
       "actions": [
         {
           "action": "LogEvent"
+        },
+        {
+          "action": "Shell",
+          "command": "curl"
         }
       ]
     }
