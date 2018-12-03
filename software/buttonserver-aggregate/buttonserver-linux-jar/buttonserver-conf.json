@@ -30,8 +30,22 @@
           "action": "LogEvent"
         },
         {
-          "action": "Shell",
-          "command": "curl"
+          "action": "Triggers",
+          "triggers": [
+            {
+              "condition": {
+                "property": "EventType",
+                "operator": "==",
+                "value": "ButtonDown"
+              },
+              "actions": [
+                {
+                  "action": "Shell",
+                  "command": "curl http://192.168.29.183:3000/start"
+                }
+              ]
+            }
+          ]
         }
       ]
     }
