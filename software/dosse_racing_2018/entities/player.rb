@@ -12,8 +12,11 @@ class Player
     @dead = false
     @dead_for = 0
 
+    i = 0
     segments = Assets::ROAD.map do |pos|
-      RoadSegment.new(pos)
+      s = RoadSegment.new(pos, i)
+      i += 1
+      s
     end
     
     segments.each_cons(2) do |a, b|
@@ -23,6 +26,8 @@ class Player
 
     @front_segment = segments.first
     @back_segment = segments.first
+    @nearest_segment = segments.first
+    @next_segment = segments.first
   end
 
   attr_reader :position
@@ -123,6 +128,24 @@ class Player
       @back_segment = @back_segment.next
     end
 
+    while @nearest_segment.next && ((@nearest_segment.position - @position).magnitude > (@nearest_segment.next.position - @position).magnitude)
+      @nearest_segment = @nearest_segment.next
+    end
+
+    while @nearest_segment.previous && ((@nearest_segment.position - @position).magnitude > (@nearest_segment.previous.position - @position).magnitude)
+      @nearest_segment = @nearest_segment.previous
+    end
+
+    while @next_segment.next && (@next_segment.next.position - @position).magnitude < 800
+      @next_segment = @next_segment.next
+    end
+
+    DATA[:progress] = @next_segment.index * 1.0 / Assets::ROAD.size
+
+    if !@next_segment.next
+      # TODO
+    end
+
   end
 
 
@@ -134,5 +157,15 @@ class Player
     end
     target_indicator_pos = @position + Vector.from_angle(CONTROLS.button_target_angle, @car_scale * 50)
     draw_triangle(target_indicator_pos, 15, Gosu::Color::argb(1000 - CONTROLS.time_since_last_button_use * 0.3, 0, 255, 10000))
+
+    next_segment_distance = @next_segment.position - @position
+
+    if next_segment_distance.magnitude > 800
+      next_segment_indicator_pos = @position + next_segment_distance.normalize * 100
+      draw_triangle(next_segment_indicator_pos, 15, Gosu::Color::RED)
+      DATA[:off_road] = true
+    else
+      DATA[:off_road] = false
+    end
   end
 end

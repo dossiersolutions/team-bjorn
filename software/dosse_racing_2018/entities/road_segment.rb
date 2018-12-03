@@ -1,11 +1,12 @@
 class RoadSegment
-  def initialize(position)
+  def initialize(position, index)
     @position = Vector[*position]
+    @index = index
     shade = Gosu::random(25, 35)
     @color = Gosu::Color::rgb(shade, shade, shade)
   end
 
-  attr_reader :next, :position, :displacement, :color
+  attr_reader :next, :position, :displacement, :color, :index
   attr_accessor :previous
 
   def next=(next_segment)
@@ -17,7 +18,7 @@ class RoadSegment
   end
 
   def draw(millis)
-    draw_triangle(@position, 15, Gosu::Color::BLUE)
+    # draw_triangle(@position, 15, Gosu::Color::BLUE)
     if @next
       Gosu.draw_quad(*@position - @displacement, @color, *@next.position - (@next.displacement || displacement), @next.color, *(@next.position + (@next.displacement || displacement)), @next.color, *(@position + @displacement), @color, 3)
     end

@@ -33,11 +33,19 @@ class GameWorld < EntitySystem
       # end
     end
 
-    Assets::UI_FONT.draw_text("#{DATA[:player_kph].to_i} kph", *UI_TEXT_TOP_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
+    Assets::UI_FONT.draw_text("#{DATA[:player_kph].to_i} kph ", *UI_TEXT_TOP_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
 
     if DATA[:big_text]
       Assets::UI_FONT.draw_text(DATA[:big_text], *VIEWPORT_CENTER_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(255, 255, 100, 0))
+    elsif DATA[:off_road]
+      Assets::UI_FONT.draw_text("Missing checkpoint, get back on track now!", *VIEWPORT_CENTER_LEFT, 10000, 0.7, 0.7, Gosu::Color::argb(255, 255, 0, 0))
     end
 
+    draw_progress(DATA[:progress], "Player", Gosu::Color::argb(255, 0, 0, 255))
+  end
+
+  def draw_progress(progress, name, color)
+    draw_triangle(Vector[UI_TEXT_HEIGHT * 0.5, VIEWPORT_SIZE.y * (1 - progress)], 30, color)
+    Assets::UI_FONT.draw_text(name, UI_TEXT_HEIGHT, VIEWPORT_SIZE.y * (1 - progress), 10000, 0.5, 0.5, color)
   end
 end
