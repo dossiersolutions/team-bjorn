@@ -60,7 +60,7 @@
 					{
 						"operator": "==",
 						"field": "pot_q_state",
-						"value": 8
+						"value": 0
 					}
 				]
 			},
@@ -85,14 +85,119 @@
 					{
 						"operator": "==",
 						"field": "pot_q_state",
-						"value": 7
+						"value": 1
 					}
 				]
 			},
 			"actions": [
 				{
 					"type": "shell",
-					"command": "ssh pi@192.168.29.9 'aplay getupstandup.wav'"
+					"command": "ssh pi@192.168.29.9 'aplay teleporter.wav'"
+				}
+			]
+		},
+		{
+			"cond": {
+				"operator": "and",
+				"conds": [
+					{
+						"event": "button_down"
+					},
+					{
+						"operator": "==",
+						"field": "pot_q_state",
+						"value": 2
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "shell",
+					"command": "ssh pi@192.168.29.9 'aplay screetch_pop.wav'"
+				}
+			]
+		},
+		{
+			"cond": {
+				"operator": "and",
+				"conds": [
+					{
+						"event": "button_down"
+					},
+					{
+						"operator": "==",
+						"field": "pot_q_state",
+						"value": 3
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "shell",
+					"command": "ssh pi@192.168.29.9 'aplay hyperspace.wav'"
+				}
+			]
+		},
+		{
+			"cond": {
+				"operator": "and",
+				"conds": [
+					{
+						"event": "button_down"
+					},
+					{
+						"operator": "==",
+						"field": "pot_q_state",
+						"value": 4
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "shell",
+					"command": "ssh pi@192.168.29.9 'aplay acme_siren.wav'"
+				}
+			]
+		},
+		{
+			"cond": {
+				"operator": "and",
+				"conds": [
+					{
+						"event": "button_down"
+					},
+					{
+						"operator": "==",
+						"field": "pot_q_state",
+						"value": 5
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "shell",
+					"command": "ssh pi@192.168.29.9 'aplay pipe.wav'"
+				}
+			]
+		},
+		{
+			"cond": {
+				"operator": "and",
+				"conds": [
+					{
+						"event": "button_down"
+					},
+					{
+						"operator": "==",
+						"field": "pot_q_state",
+						"value": 6
+					}
+				]
+			},
+			"actions": [
+				{
+					"type": "shell",
+					"command": "ssh pi@192.168.29.9 'aplay grenade.wav'"
 				}
 			]
 		}
