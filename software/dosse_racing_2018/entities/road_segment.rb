@@ -6,6 +6,7 @@ class RoadSegment
   end
 
   attr_reader :next, :position, :displacement, :color
+  attr_accessor :previous
 
   def next=(next_segment)
     @next = next_segment

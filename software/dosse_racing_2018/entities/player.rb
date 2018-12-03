@@ -1,4 +1,5 @@
 CONTROLS = Controls.new
+ROAD_VIEW_DISTANCE = 4
 
 class Player
   def initialize
@@ -10,6 +11,18 @@ class Player
     @time = 0
     @dead = false
     @dead_for = 0
+
+    segments = Assets::ROAD.map do |pos|
+      RoadSegment.new(pos)
+    end
+    
+    segments.each_cons(2) do |a, b|
+      a.next = b
+      b.previous = a
+    end
+
+    @front_segment = segments.first
+    @back_segment = segments.first
   end
 
   attr_reader :position
@@ -97,7 +110,21 @@ class Player
         @velocity = distance.normalize * @velocity.magnitude
       end
     end
+
+    # Add road segments that are getting close to the viewport
+    while @front_segment && ((@front_segment.position - PLAYER.position).magnitude < [*VIEWPORT_SIZE].max * ROAD_VIEW_DISTANCE)
+      entities.add(@front_segment)
+      @front_segment = @front_segment.next
+    end
+
+    # Remove old road segments
+    while @back_segment.next && ((@back_segment.position - @position).magnitude > [*VIEWPORT_SIZE].max * ROAD_VIEW_DISTANCE)
+      entities.kill(@back_segment)
+      @back_segment = @back_segment.next
+    end
+
   end
+
 
   def draw(millis)
     # Assets::SUV.draw_rot(@position.x, @position.y, 1, @velocity.angle + 90, 0.5, 0.5 @car_scale, @car_scale)

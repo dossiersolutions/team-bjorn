@@ -12,14 +12,6 @@ class GameWorld < EntitySystem
     @entities << CAMERA
     @entities << WORLDGEN
     @entities << PathRecorder.new if DEV_MODE
-
-    Assets::ROAD.map do |pos|
-      segment = RoadSegment.new(pos)
-      @entities << segment
-      segment
-    end.each_cons(2) do |a, b|
-      a.next = b
-    end
   end
 
   def draw
@@ -46,5 +38,6 @@ class GameWorld < EntitySystem
     if DATA[:big_text]
       Assets::UI_FONT.draw_text(DATA[:big_text], *VIEWPORT_CENTER_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(255, 255, 100, 0))
     end
+
   end
 end
