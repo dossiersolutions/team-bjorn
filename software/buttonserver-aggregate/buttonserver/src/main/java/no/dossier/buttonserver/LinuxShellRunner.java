@@ -15,7 +15,7 @@ public final class LinuxShellRunner extends ShellRunner {
     void runCommand(String command) {
         try {
             LOGGER.info("Running LinuxShellRunner with command {}", command);
-            ProcessBuilder processBuilder = new ProcessBuilder("sh", command);
+            ProcessBuilder processBuilder = new ProcessBuilder("sh", "-c \"" + command + "\"");
             processBuilder.start();
         } catch (IOException ex) {
             LOGGER.fatal("LinuxShellRunner with command {} crashed with exception {}", command, convertException(ex));
