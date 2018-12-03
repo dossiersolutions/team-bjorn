@@ -113,6 +113,7 @@ class Player
       )
         distance = (entity.position - @position)
         @velocity = distance.normalize * @velocity.magnitude
+        entities.add VisualSfx.new(@position, "Boing!")
       end
     end
 
