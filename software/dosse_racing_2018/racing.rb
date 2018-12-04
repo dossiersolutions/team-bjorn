@@ -9,12 +9,18 @@ puts "Loading can take some time the first time you run the game, because we hav
 
 require "set"
 require "matrix" # vector math
+require "zlib" # path file serialization
+require "json" # --:--
 require "bundler/inline"
 
 gemfile do # this uses bundler to install external gems
   source "https://rubygems.org"
   gem "gosu", require: true # the game library
   gem "perlin", require: true
+end
+
+def deserialize(str)
+  JSON.parse(Zlib::inflate(str))
 end
 
 require "./support/math"

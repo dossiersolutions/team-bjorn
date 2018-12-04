@@ -1,7 +1,7 @@
 class Enemy
   def initialize(name, color)
     @name = name
-    @data = Marshal::load(File.read(name + ".enemy"))
+    @data = deserialize(File.read(name + ".enemy"))
     @time = 0
     @current_frame = @data.first
     @car_scale = 1

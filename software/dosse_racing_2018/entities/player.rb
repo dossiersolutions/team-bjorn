@@ -3,7 +3,7 @@ ROAD_VIEW_DISTANCE = 4
 
 class Player
   def initialize
-    @position = VIEWPORT_CENTER
+    @position = Vector[1280, 720]
     @velocity = Vector[0, 0.0000001]
     @facing_angle = 0
     @car_scale = 1

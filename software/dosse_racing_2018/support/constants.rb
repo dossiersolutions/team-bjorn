@@ -3,8 +3,6 @@ SHORT_CIRCUIT = true
 DEV_MODE = true
 VIEWPORT_SIZE = MONITOR_RESOLUTION
 FULLSCREEN = true
-# VIEWPORT_SIZE = if SHORT_CIRCUIT then MONITOR_RESOLUTION * 0.5 else MONITOR_RESOLUTION end
-# FULLSCREEN = !SHORT_CIRCUIT
 UI_TEXT_HEIGHT = VIEWPORT_SIZE.y / 16
 VIEWPORT_CENTER = VIEWPORT_SIZE / 2
 VIEWPORT_CENTER_LEFT = Vector[UI_TEXT_HEIGHT, VIEWPORT_SIZE.y * 0.5]
@@ -17,7 +15,7 @@ PERLIN_FORESTNESS = Perlin::Generator.new SEED, 1.0, 5
 ENEMY_FRAME_LENGTH = 17
 
 DATA = { # used by entities etc to communicate
-
+  race_time: 0
 }
 
 module Assets # preload all game assets into global constants
@@ -32,7 +30,7 @@ module Assets # preload all game assets into global constants
   JINGLE     = Gosu::Song.new("assets/jingle.ogg")
   UI_FONT    = Gosu::Font.new(UI_TEXT_HEIGHT.to_i, name: "assets/retganon.ttf")
 
-  ROAD       = Marshal::load(File.read("road.path"))
+  ROAD       = deserialize(File.read("road.path"))
 end
 
 srand 1234
