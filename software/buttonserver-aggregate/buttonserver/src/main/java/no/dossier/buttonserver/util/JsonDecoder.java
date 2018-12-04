@@ -124,7 +124,7 @@ public final class JsonDecoder<A> {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
                     JsonElement value = jsonObject.get(name);
                     return (value != null) ?
-                            valueDecoder.run(value) :
+                            valueDecoder.run(value).mapFail(msg -> String.format("%s: %s", name, msg)) :
                             fail(String.format("Property \"%s\" not found: %s", name, jsonObject));
                 },
                 () -> String.format("Not a JSON object: %s", jsonElement)));
@@ -137,7 +137,7 @@ public final class JsonDecoder<A> {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
                     JsonElement value = jsonObject.get(name);
                     return (value != null) ?
-                            valueDecoder.run(value).map(Option::some) :
+                            valueDecoder.run(value).bimap(Option::some, msg -> String.format("%s: %s", name, msg)) :
                             ok(none());
                 },
                 () -> String.format("Not a JSON object: %s", jsonElement)));

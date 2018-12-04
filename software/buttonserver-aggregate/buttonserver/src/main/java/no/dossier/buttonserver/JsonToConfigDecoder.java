@@ -20,6 +20,8 @@ import no.dossier.buttonserver.util.Result;
 
 import java.util.function.Function;
 
+import static no.dossier.buttonserver.types.Action.forwardMessageAction;
+import static no.dossier.buttonserver.types.Action.logEventAction;
 import static no.dossier.buttonserver.types.ButtonId.buttonIdResult;
 import static no.dossier.buttonserver.types.Condition.always;
 import static no.dossier.buttonserver.types.Condition.never;
@@ -80,7 +82,7 @@ import static no.dossier.buttonserver.util.Result.optionResult;
  * <eventType> ::= "ButtonDown" | "ButtonUp" | "Click" | "DoubleClick" | "PotentiometerChange"
  * <buttonState> ::= "Up" | "Down"
  *
- * <action> ::= <shellAction> | <logEventAction> | <triggersAction>
+ * <eventAction> ::= <shellAction> | <forwardMessageAction> | <logEventAction> | <triggersAction>
  *
  * Parameters in the "command" string referencing event attributes are prefixed by a $ sign. To insert a $ sign literally, use $$.
  * Expansion is performed also inside string literals.
@@ -91,13 +93,13 @@ import static no.dossier.buttonserver.util.Result.optionResult;
  *   - $ButtonState (Expanded to one of: Up, Down)
  *   - $PotentiometerState (Expanded to 0..1023)
  *   - $PotentiometerStep (Expanded to 0..8)
- *
  * <shellAction> ::= { "action": "Shell", "command": <STRING> }
  *
+ * <forwardMessageAction> ::= { "action": "ForwardMessage", "hostName": <STRING>, "port": <INTEGER> }
  * <logEventAction> ::= { "action": "LogEvent" }
  *
  * "triggers" is optional, but if it is absent, then nothing will happen in this branch
- * <triggersAction> ::= { "action": "Triggers", "triggers": [ <trigger> ] }
+ * <triggersAction> ::= { "action": "Triggers", "triggers": [ <eventTrigger> ] }
  */
 public final class JsonToConfigDecoder {
 
@@ -108,32 +110,28 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Config> configDecoder() {
-        JsonDecoder<String> versionFieldDecoder = fieldDecoder(
-                "version",
-                stringDecoder().mapFail(msg -> String.format("version: %s", msg)));
+        JsonDecoder<String> versionFieldDecoder = fieldDecoder("version", stringDecoder());
 
         return versionFieldDecoder.flatMap(version -> {
             JsonDecoder<Config> configDecoder;
             if (version.equals("0.1")) {
                 // Support missing "settings" property
-                JsonDecoder<Option<Settings>> settingsFieldDecoder = optionalFieldDecoder(
-                        "settings",
-                        settingsDecoder().mapFail(msg -> String.format("settings: %s", msg)));
+                JsonDecoder<Option<Settings>> settingsFieldDecoder =
+                        optionalFieldDecoder("settings", settingsDecoder());
 
                 JsonDecoder<Settings> settingsDecoder = settingsFieldDecoder
                         .map(settingsOption -> settingsOption.getOrElse(() -> new Settings(DEFAULT_PORT)));
 
                 // Support missing "triggers" property
-                JsonDecoder<Option<List<Trigger>>> triggersFieldDecoder = optionalFieldDecoder(
-                        "triggers",
-                        listDecoder(triggerDecoder()).mapFail(msg -> String.format("triggers: %s", msg)));
+                JsonDecoder<Option<List<Trigger>>> eventTriggersFieldDecoder =
+                        optionalFieldDecoder("triggers", listDecoder(triggerDecoder()));
 
-                JsonDecoder<List<Trigger>> triggersDecoder = triggersFieldDecoder
+                JsonDecoder<List<Trigger>> eventTriggersDecoder = eventTriggersFieldDecoder
                         .map(triggersOption -> triggersOption.getOrElse(List::nil));
 
                 configDecoder = JsonDecoder.map2(
                         settingsDecoder,
-                        triggersDecoder,
+                        eventTriggersDecoder,
                         settings -> triggers -> new Config(settings, triggers));
             } else {
                 configDecoder = JsonDecoder.failure(String.format("Unsupported version %s", version));
@@ -144,9 +142,7 @@ public final class JsonToConfigDecoder {
 
     private static JsonDecoder<Settings> settingsDecoder() {
         // Support missing "port" property
-        JsonDecoder<Option<Integer>> portFieldDecoder = optionalFieldDecoder(
-                "port",
-                integerDecoder().mapFail(msg -> String.format("port: %s", msg)));
+        JsonDecoder<Option<Integer>> portFieldDecoder = optionalFieldDecoder("port", integerDecoder());
 
         return portFieldDecoder.map(portOption -> {
             int port = portOption.getOrElse(() -> DEFAULT_PORT);
@@ -156,17 +152,14 @@ public final class JsonToConfigDecoder {
 
     private static JsonDecoder<Trigger> triggerDecoder() {
         // Support missing "conditions" property
-        JsonDecoder<Option<Condition>> conditionFieldDecoder = optionalFieldDecoder(
-                "condition",
-                conditionDecoder().mapFail(msg -> String.format("condition: %s", msg)));
+        JsonDecoder<Option<Condition>> conditionFieldDecoder = optionalFieldDecoder("condition", conditionDecoder());
 
         JsonDecoder<Condition> conditionDecoder = conditionFieldDecoder
                 .map(conditionOption -> conditionOption.getOrElse(Condition::always));
 
         // Support missing "actions" property
-        JsonDecoder<Option<List<Action>>> actionsFieldDecoder = optionalFieldDecoder(
-                "actions",
-                listDecoder(actionDecoder()).mapFail(msg -> String.format("actions: %s", msg)));
+        JsonDecoder<Option<List<Action>>> actionsFieldDecoder =
+                optionalFieldDecoder("actions", listDecoder(actionDecoder()));
 
         JsonDecoder<List<Action>> actionsDecoder = actionsFieldDecoder
                 .map(actionsOption -> actionsOption.getOrElse(List::nil));
@@ -178,9 +171,7 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Condition> conditionDecoder() {
-        JsonDecoder<String> operatorStrFieldDecoder = fieldDecoder(
-                "operator",
-                stringDecoder().mapFail(msg -> String.format("operator: %s", msg)));
+        JsonDecoder<String> operatorStrFieldDecoder = fieldDecoder("operator", stringDecoder());
 
         return operatorStrFieldDecoder.flatMap(operatorStr -> {
             JsonDecoder<Condition> decoder;
@@ -262,17 +253,14 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Condition> connectiveConditionDecoder(Function<List<Condition>, Condition> factory) {
-        JsonDecoder<List<Condition>> conditionsFieldDecoder = fieldDecoder(
-                "conditions",
-                listDecoder(conditionDecoder()).mapFail(msg -> String.format("conditions: %s", msg)));
+        JsonDecoder<List<Condition>> conditionsFieldDecoder =
+                fieldDecoder("conditions", listDecoder(conditionDecoder()));
 
         return conditionsFieldDecoder.map(factory);
     }
 
     private static JsonDecoder<Condition> negationConditionDecoder() {
-        JsonDecoder<Condition> conditionFieldDecoder = fieldDecoder(
-                "condition",
-                conditionDecoder().mapFail(msg -> String.format("condition: %s", msg)));
+        JsonDecoder<Condition> conditionFieldDecoder = fieldDecoder("condition", conditionDecoder());
 
         return conditionFieldDecoder.map(Condition::not);
     }
@@ -284,9 +272,7 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Condition> comparisonConditionDecoder(ComparisonConditionFactory conditionFactory) {
-        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder(
-                "property",
-                stringDecoder().mapFail(msg -> String.format("property: %s", msg)));
+        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder("property", stringDecoder());
 
         return propertyNameFieldDecoder
                 .flatMap(propertyName -> propertyDecoder(propertyName, new PropertyDecoderFactory<Condition>() {
@@ -336,9 +322,7 @@ public final class JsonToConfigDecoder {
     private static JsonDecoder<Condition> ordComparisonConditionDecoder(
             OrdComparisonConditionFactory conditionFactory) {
 
-        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder(
-                "property",
-                stringDecoder().mapFail(msg -> String.format("property: %s", msg)));
+        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder("property", stringDecoder());
 
         return propertyNameFieldDecoder
                 .flatMap(propertyName -> propertyDecoder(propertyName, new PropertyDecoderFactory<Condition>() {
@@ -380,9 +364,7 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Condition> betweenConditionDecoder() {
-        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder(
-                "property",
-                stringDecoder().mapFail(msg -> String.format("property: %s",msg)));
+        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder("property", stringDecoder());
 
         return propertyNameFieldDecoder
                 .flatMap(propertyName -> propertyDecoder(propertyName, new PropertyDecoderFactory<Condition>() {
@@ -437,9 +419,7 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Condition> inConditionDecoder() {
-        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder(
-                "property",
-                stringDecoder().mapFail(msg -> String.format("property: %s",msg)));
+        JsonDecoder<String> propertyNameFieldDecoder = fieldDecoder("property", stringDecoder());
 
         return propertyNameFieldDecoder
                 .flatMap(propertyName -> propertyDecoder(propertyName, new PropertyDecoderFactory<Condition>() {
@@ -606,36 +586,29 @@ public final class JsonToConfigDecoder {
     }
 
     private static JsonDecoder<Action> shellActionDecoder() {
-        JsonDecoder<String> commandTemplateFieldDecoder = fieldDecoder(
-                "command",
-                stringDecoder().mapFail(msg -> String.format("command: %s", msg)));
+        JsonDecoder<String> commandTemplateFieldDecoder = fieldDecoder("command", stringDecoder());
 
         return commandTemplateFieldDecoder.map(Action::shellAction);
     }
 
     private static JsonDecoder<Action> forwardMessageActionDecoder() {
-        JsonDecoder<String> hostNameFieldDecoder = fieldDecoder(
-                "hostName",
-                stringDecoder().mapFail(msg -> String.format("hostName: %s", msg)));
+        JsonDecoder<String> hostNameFieldDecoder = fieldDecoder("hostName", stringDecoder());
 
-        JsonDecoder<Integer> portFieldDecoder = fieldDecoder(
-                "port",
-                integerDecoder().mapFail(msg -> String.format("port: %s", msg)));
+        JsonDecoder<Integer> portFieldDecoder = fieldDecoder("port", integerDecoder());
 
         return JsonDecoder.map2(
                 hostNameFieldDecoder,
                 portFieldDecoder,
-                hostName -> port -> Action.forwardMessageAction(hostName, port));
+                hostName -> port -> forwardMessageAction(hostName, port));
     }
 
     private static JsonDecoder<Action> logEventActionDecoder() {
-        return JsonDecoder.success(Action.logEventAction());
+        return JsonDecoder.success(logEventAction());
     }
 
     private static JsonDecoder<Action> triggersActionDecoder() {
-        JsonDecoder<List<Trigger>> triggersFieldDecoder = fieldDecoder(
-                "triggers",
-                listDecoder(triggerDecoder()).mapFail(msg -> String.format("triggers: %s", msg)));
+        JsonDecoder<List<Trigger>> triggersFieldDecoder =
+                fieldDecoder("triggers", listDecoder(triggerDecoder()));
 
         return triggersFieldDecoder.map(Action::triggersAction);
     }

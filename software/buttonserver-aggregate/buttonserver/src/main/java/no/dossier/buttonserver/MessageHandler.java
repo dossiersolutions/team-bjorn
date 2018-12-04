@@ -4,11 +4,11 @@ import no.dossier.buttonserver.types.ButtonEvent;
 import no.dossier.buttonserver.types.ButtonId;
 import no.dossier.buttonserver.types.ButtonMessage;
 import no.dossier.buttonserver.types.ConfigVersion;
+import no.dossier.buttonserver.types.Trigger;
 import no.dossier.buttonserver.types.EventType;
 import no.dossier.buttonserver.types.PotentiometerState;
 import no.dossier.buttonserver.types.PotentiometerStep;
 import no.dossier.buttonserver.types.ThatButtonState;
-import no.dossier.buttonserver.types.Trigger;
 import no.dossier.buttonserver.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +60,7 @@ public final class MessageHandler implements Runnable {
         try {
             LOGGER.info("Starting MessageHandler for button {}", buttonId.getValue());
 
-            State state = new InitState();
+            ClickState state = new InitClickState();
             while (!state.isStopState()) {
                 ConfigVersion newConfigVersion = configVersionRef.get();
                 if (newConfigVersion.getVersion() != currConfigVersion.getVersion()) {
@@ -136,18 +136,18 @@ public final class MessageHandler implements Runnable {
     }
 
 
-    private abstract static class State {
+    private abstract static class ClickState {
 
         abstract boolean isStopState();
 
-        abstract State next() throws InterruptedException;
+        abstract ClickState next() throws InterruptedException;
 
-        abstract State resetClickHandling();
+        abstract ClickState resetClickHandling();
 
     }
 
 
-    private final class InitState extends State {
+    private final class InitClickState extends ClickState {
 
         @Override
         boolean isStopState() {
@@ -155,7 +155,7 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() throws InterruptedException {
+        ClickState next() throws InterruptedException {
             /*
              * Assume that the button initially is in the UP position.
              *
@@ -163,7 +163,7 @@ public final class MessageHandler implements Runnable {
              * but no event if the first message has ButtonState BUTTON_UP.
              */
 
-            return nextState(
+            return nextClickState(
                     QUIT_POLL_INTERVAL_MILLIS,
                     message -> {
                         handleEvent(EventType.INIT, message);
@@ -187,14 +187,14 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return this;
         }
 
     }
 
 
-    private final class Up extends State {
+    private final class Up extends ClickState {
 
         private final PotentiometerState potentiometerState;
         private final PotentiometerStep potentiometerStep;
@@ -210,8 +210,8 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() throws InterruptedException {
-            return nextState(
+        ClickState next() throws InterruptedException {
+            return nextClickState(
                     QUIT_POLL_INTERVAL_MILLIS,
                     message -> {
                         handlePotentiometerChange(potentiometerState, potentiometerStep, message);
@@ -233,14 +233,14 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return this;
         }
 
     }
 
 
-    private final class Down extends State {
+    private final class Down extends ClickState {
 
         private final PotentiometerState potentiometerState;
         private final PotentiometerStep potentiometerStep;
@@ -256,8 +256,8 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() throws InterruptedException {
-            return nextState(
+        ClickState next() throws InterruptedException {
+            return nextClickState(
                     QUIT_POLL_INTERVAL_MILLIS,
                     message -> {
                         handlePotentiometerChange(potentiometerState, potentiometerStep, message);
@@ -280,14 +280,14 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return this;
         }
 
     }
 
 
-    private final class DownMaybeClick extends State {
+    private final class DownMaybeClick extends ClickState {
 
         private final PotentiometerState potentiometerState;
         private final PotentiometerStep potentiometerStep;
@@ -303,8 +303,8 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() throws InterruptedException {
-            return nextState(
+        ClickState next() throws InterruptedException {
+            return nextClickState(
                     CLICK_INTERVAL_MILLIS,
                     message -> {
                         handlePotentiometerChange(potentiometerState, potentiometerStep, message);
@@ -330,14 +330,14 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return new Down(potentiometerState, potentiometerStep);
         }
 
     }
 
 
-    private final class UpAfterClick extends State {
+    private final class UpAfterClick extends ClickState {
 
         private final ButtonMessage releaseMessage;
         private final PotentiometerState potentiometerState;
@@ -359,8 +359,8 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() throws InterruptedException {
-            return nextState(
+        ClickState next() throws InterruptedException {
+            return nextClickState(
                     CLICK_INTERVAL_MILLIS,
                     message -> {
                         handlePotentiometerChange(potentiometerState, potentiometerStep, message);
@@ -391,14 +391,14 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return new Up(potentiometerState, potentiometerStep);
         }
 
     }
 
 
-    private final class DownMaybeDoubleClick extends State {
+    private final class DownMaybeDoubleClick extends ClickState {
 
         private final ButtonMessage releaseMessage;
         private final PotentiometerState potentiometerState;
@@ -420,8 +420,8 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() throws InterruptedException {
-            return nextState(
+        ClickState next() throws InterruptedException {
+            return nextClickState(
                     CLICK_INTERVAL_MILLIS,
                     message -> {
                         handlePotentiometerChange(potentiometerState, potentiometerStep, message);
@@ -451,14 +451,14 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return new Down(potentiometerState, potentiometerStep);
         }
 
     }
 
 
-    private static final class StopState extends State {
+    private static final class StopClickState extends ClickState {
 
         @Override
         boolean isStopState() {
@@ -466,25 +466,25 @@ public final class MessageHandler implements Runnable {
         }
 
         @Override
-        State next() {
+        ClickState next() {
             return this;
         }
 
         @Override
-        State resetClickHandling() {
+        ClickState resetClickHandling() {
             return this;
         }
 
     }
 
 
-    private State nextState(
+    private ClickState nextClickState(
             long timeoutMillis,
-            Function<ButtonMessage, State> onButtonUp,
-            Function<ButtonMessage, State> onButtonDown,
-            Supplier<State> onTimeout) throws InterruptedException {
+            Function<ButtonMessage, ClickState> onButtonUp,
+            Function<ButtonMessage, ClickState> onButtonDown,
+            Supplier<ClickState> onTimeout) throws InterruptedException {
 
-        State nextState;
+        ClickState nextState;
         ButtonMessage message = messageQueue.poll(timeoutMillis, TimeUnit.MILLISECONDS);
         if (message != null) {
             ThatButtonState thatButtonState = message.getThatButtonState();
@@ -500,7 +500,7 @@ public final class MessageHandler implements Runnable {
             }
         } else {
             nextState = stopFlag.get() ?
-                    new StopState() :
+                    new StopClickState() :
                     onTimeout.get();
         }
         return nextState;

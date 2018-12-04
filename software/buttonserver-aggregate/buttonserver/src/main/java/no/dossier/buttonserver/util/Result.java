@@ -57,6 +57,12 @@ public abstract class Result<E, A> {
                 error -> fail(f.apply(error)));
     }
 
+    public final <E2, B> Result<E2, B> bimap(Function<A, B> onOk, Function<E, E2> onFail) {
+        return unwrap(
+                value -> ok(onOk.apply(value)),
+                error -> fail(onFail.apply(error)));
+    }
+
     public final <B, C> Result<E, C> map2(Result<E, B> result2, Function<A, Function<B, C>> f) {
         return flatMap(value1 -> result2.map(f.apply(value1)));
     }
@@ -96,7 +102,9 @@ public abstract class Result<E, A> {
 
     public abstract <B> B unwrap(Function<A, B> onOk, Function<E, B> onFail);
 
-    public abstract <X extends Throwable> void branch(ThrowingConsumer<X,A> onOk, ThrowingConsumer<X,E> onFail) throws X;
+    public abstract <X extends Throwable> void branch(
+            ThrowingConsumer<X, A> onOk,
+            ThrowingConsumer<X, E> onFail) throws X;
 
 
     private static final class Ok<E, A> extends Result<E, A> {
@@ -132,7 +140,7 @@ public abstract class Result<E, A> {
         }
 
         @Override
-        public <X extends Throwable> void branch(ThrowingConsumer<X,A> onOk, ThrowingConsumer<X,E> onFail) throws X {
+        public <X extends Throwable> void branch(ThrowingConsumer<X, A> onOk, ThrowingConsumer<X, E> onFail) throws X {
             onOk.accept(value);
         }
 
@@ -172,7 +180,7 @@ public abstract class Result<E, A> {
         }
 
         @Override
-        public <X extends Throwable> void branch(ThrowingConsumer<X,A> onOk, ThrowingConsumer<X,E> onFail) throws X {
+        public <X extends Throwable> void branch(ThrowingConsumer<X, A> onOk, ThrowingConsumer<X, E> onFail) throws X {
             onFail.accept(error);
         }
 
