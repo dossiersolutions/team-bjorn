@@ -185,6 +185,10 @@ public final class JsonDecoder<A> {
         return new JsonDecoder<>(jsonElement -> run(jsonElement).map(f));
     }
 
+    public JsonDecoder<A> mapFail(Function<String, String> f) {
+        return new JsonDecoder<>(jsonElement -> run(jsonElement).mapFail(f));
+    }
+
     public <B, C> JsonDecoder<C> map2(JsonDecoder<B> decoder2, Function<A, Function<B, C>> f) {
         return flatMap(value1 -> decoder2.map(f.apply(value1)));
     }

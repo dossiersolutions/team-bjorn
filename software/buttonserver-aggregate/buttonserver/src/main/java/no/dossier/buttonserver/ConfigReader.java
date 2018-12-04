@@ -1,7 +1,9 @@
 package no.dossier.buttonserver;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import no.dossier.buttonserver.types.Config;
 import no.dossier.buttonserver.util.Result;
 import org.apache.logging.log4j.LogManager;
@@ -14,21 +16,27 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
+import static no.dossier.buttonserver.util.ExceptionToStringConverter.convertException;
+
 public final class ConfigReader {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigReader.class);
 
     public static final String CONFIG_FILE_NAME = "buttonserver-conf.json";
 
-    public static Result<String,Config> readConfig() throws IOException {
+    public static Result<String, Config> readConfig() throws IOException {
         File configFile = new File(CONFIG_FILE_NAME).getCanonicalFile();
         LOGGER.info("Reading config file {}", configFile);
+
+        Result<String, Config> result;
         try (Reader input = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8)) {
             JsonParser jsonParser = new JsonParser();
             JsonElement jsonElement = jsonParser.parse(input);
-            Result<String, Config> result = JsonToConfigDecoder.decode(jsonElement);
-            return result;
+            result = JsonToConfigDecoder.decode(jsonElement);
+        } catch (JsonIOException | JsonSyntaxException ex) {
+            result = Result.fail(String.format("Failed to parse JSON: %s", convertException(ex)));
         }
+        return result;
     }
 
     private ConfigReader() {

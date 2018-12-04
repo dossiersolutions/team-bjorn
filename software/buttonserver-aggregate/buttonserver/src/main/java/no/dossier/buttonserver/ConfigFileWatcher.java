@@ -65,7 +65,7 @@ public final class ConfigFileWatcher implements Runnable {
                                                     return currConfigVersion.setNewConfig(newConfig);
                                                 },
                                                 decodeFailure -> {
-                                                    LOGGER.error("{}, using current valid configuration", decodeFailure);
+                                                    LOGGER.error("{}, still using last valid configuration", decodeFailure);
                                                     return currConfigVersion;
                                                 }
                                         );
