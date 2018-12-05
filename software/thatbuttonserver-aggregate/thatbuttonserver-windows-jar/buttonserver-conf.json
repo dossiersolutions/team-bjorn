@@ -1,0 +1,20 @@
+{
+  "version": "0.1",
+  "triggers": [
+    {
+      "condition": {
+        "property": "EventType",
+        "operator": "In",
+        "values": [
+          "ButtonUp",
+          "ButtonDown"
+        ]
+      },
+      "actions": [
+        {
+          "action": "LogEvent"
+        }
+      ]
+    }
+  ]
+}
