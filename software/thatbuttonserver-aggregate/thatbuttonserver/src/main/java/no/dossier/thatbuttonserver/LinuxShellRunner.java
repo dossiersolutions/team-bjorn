@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static no.dossier.thatbuttonserver.util.ExceptionToStringConverter.convertException;
+import static no.dossier.thatbuttonserver.util.ThrowableToStringConverter.convertThrowable;
 
 public final class LinuxShellRunner extends ShellRunner {
 
@@ -22,7 +22,7 @@ public final class LinuxShellRunner extends ShellRunner {
             new BufferedReader(new InputStreamReader(process.getInputStream())).lines().forEach(line -> LOGGER.info("Output: {}", line));
             new BufferedReader(new InputStreamReader(process.getErrorStream())).lines().forEach(line -> LOGGER.info("Error: {}", line));
         } catch (IOException ex) {
-            LOGGER.fatal("LinuxShellRunner with command {} crashed with exception {}", command, convertException(ex));
+            LOGGER.fatal("LinuxShellRunner with command {} crashed with exception {}", command, convertThrowable(ex));
         }
     }
 

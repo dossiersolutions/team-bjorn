@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static no.dossier.thatbuttonserver.ThatButtonStateCodec.encodeThatButtonState;
-import static no.dossier.thatbuttonserver.util.ExceptionToStringConverter.convertException;
+import static no.dossier.thatbuttonserver.util.ThrowableToStringConverter.convertThrowable;
 
 public final class MessageHandler implements Runnable {
 
@@ -75,7 +75,7 @@ public final class MessageHandler implements Runnable {
             LOGGER.fatal(
                     "MessageHandler for button {} crashed with exception {}",
                     buttonId.getValue(),
-                    convertException(ex));
+                    convertThrowable(ex));
         }
     }
 

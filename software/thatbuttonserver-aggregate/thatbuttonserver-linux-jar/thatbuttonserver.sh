@@ -15,6 +15,7 @@ function start {
     else
         echo "starting ${NAME}"
         touch ${RUNNING_FILENAME}
+        java -jar target/thatbuttonserver-linux-jar-1.0-SNAPSHOT-jar-with-dependencies.jar &
     fi
 }
 

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static no.dossier.thatbuttonserver.ThatButtonStateCodec.decodeThatButtonState;
-import static no.dossier.thatbuttonserver.util.ExceptionToStringConverter.convertException;
+import static no.dossier.thatbuttonserver.util.ThrowableToStringConverter.convertThrowable;
 
 public final class SocketListener implements Runnable {
 
@@ -74,7 +74,7 @@ public final class SocketListener implements Runnable {
             }
             LOGGER.info("SocketListener completed");
         } catch (InterruptedException | IOException ex) {
-            LOGGER.fatal("SocketListener crashed with exception {}", convertException(ex));
+            LOGGER.fatal("SocketListener crashed with exception {}", convertThrowable(ex));
         }
     }
 

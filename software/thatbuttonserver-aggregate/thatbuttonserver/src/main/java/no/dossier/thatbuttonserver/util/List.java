@@ -1,6 +1,7 @@
 package no.dossier.thatbuttonserver.util;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -20,8 +21,8 @@ public abstract class List<A> {
     @SafeVarargs
     public static <A> List<A> list(A... elems) {
         List<A> result = nil();
-        for (int i = elems.length-1; i >= 0; --i) {
-            result = cons(elems[i],result);
+        for (int i = elems.length - 1; i >= 0; --i) {
+            result = cons(elems[i], result);
         }
         return result;
     }
@@ -34,28 +35,32 @@ public abstract class List<A> {
     public abstract boolean forAll(Predicate<A> pred);
 
     public final List<A> filter(Predicate<A> pred) {
-        return foldRight((elem,acc) -> pred.test(elem) ? cons(elem,acc) : acc, nil());
+        return foldRight((elem, acc) -> pred.test(elem) ? cons(elem, acc) : acc, nil());
     }
 
     public final List<A> reverse() {
         return foldLeft((acc, elem) -> cons(elem, acc), nil());
     }
 
+    public final <B> List<B> map(Function<A, B> f) {
+        return foldRight((elem, acc) -> cons(f.apply(elem), acc), nil());
+    }
+
     public abstract <B> B foldLeft(BiFunction<B, A, B> reduceFunc, B initValue);
 
     public abstract <B> B foldRight(BiFunction<A, B, B> reduceFunc, B initValue);
 
-    public abstract <E extends Throwable> void forEach(ThrowingConsumer<E,A> handler) throws E;
+    public abstract <E extends Throwable> void forEach(ThrowingConsumer<E, A> handler) throws E;
 
     @Override
     public final String toString() {
         StringBuilder builder = new StringBuilder();
         return unwrap(
-                (head,tail) -> {
+                (head, tail) -> {
                     builder.append('[').append(head);
                     return tail.tailToString(builder);
                 },
-                () -> "[]"        );
+                () -> "[]");
     }
 
     abstract String tailToString(StringBuilder builder);

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-import static no.dossier.thatbuttonserver.util.ExceptionToStringConverter.convertException;
+import static no.dossier.thatbuttonserver.util.ThrowableToStringConverter.convertThrowable;
 
 public final class WindowsShellRunner extends ShellRunner {
 
@@ -18,7 +18,7 @@ public final class WindowsShellRunner extends ShellRunner {
             ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", command);
             processBuilder.start();
         } catch (IOException ex) {
-            LOGGER.fatal("WindowsShellRunner with command {} crashed with exception {}", command, convertException(ex));
+            LOGGER.fatal("WindowsShellRunner with command {} crashed with exception {}", command, convertThrowable(ex));
         }
     }
 

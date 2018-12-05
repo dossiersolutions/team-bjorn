@@ -16,13 +16,13 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-import static no.dossier.thatbuttonserver.util.ExceptionToStringConverter.convertException;
+import static no.dossier.thatbuttonserver.util.ThrowableToStringConverter.convertThrowable;
 
 public final class ConfigReader {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigReader.class);
 
-    public static final String CONFIG_FILE_NAME = "buttonserver-conf.json";
+    public static final String CONFIG_FILE_NAME = "thatbuttonserver-conf.json";
 
     public static Result<String, Config> readConfig() throws IOException {
         File configFile = new File(CONFIG_FILE_NAME).getCanonicalFile();
@@ -34,7 +34,7 @@ public final class ConfigReader {
             JsonElement jsonElement = jsonParser.parse(input);
             result = JsonToConfigDecoder.decode(jsonElement);
         } catch (JsonIOException | JsonSyntaxException ex) {
-            result = Result.fail(String.format("Failed to parse JSON: %s", convertException(ex)));
+            result = Result.fail(String.format("Failed to parse JSON: %s", convertThrowable(ex)));
         }
         return result;
     }

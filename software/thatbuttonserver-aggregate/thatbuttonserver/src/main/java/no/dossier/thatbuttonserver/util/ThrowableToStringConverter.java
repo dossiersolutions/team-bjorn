@@ -3,16 +3,16 @@ package no.dossier.thatbuttonserver.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public final class ExceptionToStringConverter {
+public final class ThrowableToStringConverter {
 
-    public static <E extends Throwable> String convertException(E exception) {
+    public static String convertThrowable(Throwable exception) {
         StringWriter exceptionWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(exceptionWriter));
         String exceptionStr = exceptionWriter.toString();
         return exceptionStr;
     }
 
-    private ExceptionToStringConverter() {
+    private ThrowableToStringConverter() {
     }
 
 }

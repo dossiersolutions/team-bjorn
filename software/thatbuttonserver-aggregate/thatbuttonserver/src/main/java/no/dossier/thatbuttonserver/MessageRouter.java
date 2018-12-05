@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static no.dossier.thatbuttonserver.util.ExceptionToStringConverter.convertException;
+import static no.dossier.thatbuttonserver.util.ThrowableToStringConverter.convertThrowable;
 
 public final class MessageRouter implements Runnable {
 
@@ -77,7 +77,7 @@ public final class MessageRouter implements Runnable {
 
             LOGGER.info("MessageRouter completed");
         } catch (InterruptedException ex) {
-            LOGGER.fatal("MessageRouter crashed with exception {}", convertException(ex));
+            LOGGER.fatal("MessageRouter crashed with exception {}", convertThrowable(ex));
         }
     }
 
