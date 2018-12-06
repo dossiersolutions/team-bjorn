@@ -1,0 +1,10 @@
+- fix windows data file bug
+- add enemy portraits
+- audio
+- try to package windows exe with ocra
+- show score & position at the end of the game
+  add win/lose stuff
+- make it possible to restart (reinitialize all default entities)
+- restart after wining
+- add countdown at beginning
+- in-game menu / pause
