@@ -1,6 +1,6 @@
 MONITOR_RESOLUTION = Vector[Gosu::screen_width * 1.0, Gosu::screen_height * 1.0]
-SHORT_CIRCUIT = true
-DEV_MODE = true
+SHORT_CIRCUIT = false
+DEV_MODE = false
 VIEWPORT_SIZE = MONITOR_RESOLUTION
 FULLSCREEN = true
 UI_TEXT_HEIGHT = VIEWPORT_SIZE.y / 16
@@ -25,11 +25,16 @@ module Assets # preload all game assets into global constants
   PINE       = Gosu::Image.new("assets/pine.png")
   HANSES     = Gosu::Image.new("assets/hanses.jpg")
   OMAR       = Gosu::Image.new("assets/omar.jpg")
+  MACHETTE   = Gosu::Image.new("assets/machette.jpg")
   WHITE_SOFT = Gosu::Image.new("assets/white_soft_particle.png")
   BLACK_SOFT = Gosu::Image.new("assets/black_soft_particle.png")
   FLOWERS    = Gosu::Image.load_tiles("assets/flowers_and_stuff.png", 32, 32, retro: true)
   THEME_SONG = Gosu::Song.new("assets/theme.ogg")
   JINGLE     = Gosu::Song.new("assets/jingle.ogg")
+  WIN_SOUND  = Gosu::Sample.new("assets/sounds/win.ogg")
+  LOSE_SOUND = Gosu::Sample.new("assets/sounds/lose.ogg")
+  ENGINE_SOUND = Gosu::Sample.new("assets/sounds/engine.ogg")
+  BIRDS      = Gosu::Sample.new("assets/sounds/birds2.ogg")
   UI_FONT    = Gosu::Font.new(UI_TEXT_HEIGHT.to_i, name: "assets/retganon.ttf")
 
   ROAD       = deserialize_from_file("road.path")

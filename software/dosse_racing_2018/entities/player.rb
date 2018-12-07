@@ -11,8 +11,6 @@ class Player
     @time = 0
     @race_time = 0
     @race_completed = false
-    @dead = false
-    @dead_for = 0
 
     i = 0
     segments = Assets::ROAD.map do |pos|
@@ -46,20 +44,19 @@ class Player
     @time += dt
 
 
-    # TODO
-    # reset_world if Gosu.button_down?(Gosu::KB_P)
+    reset_world if Gosu.button_down?(Gosu::KB_R)
 
-    if @dead
-      DATA[:big_text] = "You lost the race, you one-legged excuse for a dork."
-      @dead_for += dt
+    # if @dead
+    #   DATA[:big_text] = "You lost the race, you one-legged excuse for a dork."
+    #   @dead_for += dt
 
-      if @dead_for > 3000
-        reset_world
-        DATA[:big_text] = nil
-      end
+    #   if @dead_for > 3000
+    #     reset_world
+    #     DATA[:big_text] = nil
+    #   end
 
-      return
-    end
+    #   return
+    # end
 
     # steering
 
@@ -161,6 +158,15 @@ class Player
     end
 
     if !@next_segment.next
+      if !@race_completed
+        if COMPETITORS.sort do |c|
+          -c.race_time
+        end.first == PLAYER
+          Assets::WIN_SOUND.play
+        else
+          Assets::LOSE_SOUND.play
+        end
+      end
       @race_completed = true
     elsif
       @race_time += dt

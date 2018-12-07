@@ -43,5 +43,28 @@ class IntroScene
     draw_star_image
 
     @starfield.draw
+    
+    color = Gosu::Color::argb(100, 255, 255, 255)
+
+    margin = VIEWPORT_SIZE / 4
+
+    Gosu::draw_quad(
+      margin.x, margin.y, color,
+      Gosu::screen_width - margin.x, margin.y, color,
+      margin.x, Gosu::screen_height - margin.y, color,
+      Gosu::screen_width - margin.x, Gosu::screen_height - margin.y, color,
+      10000
+    )
+
+    help_text = "CONTROLS:\n" +
+    "thatButton, keyboard up - gas\n" +
+    "thatKnob, keyboard left and right - steering\n" +
+    "ESC - quit game\n" +
+    "r - restart game\n" +
+    "\n" +
+    "#pushItLikeADossier\n" +
+    "\n" +
+    "- Team Bjorn"
+    Assets::UI_FONT.draw_text(help_text, margin.x * 1.1, margin.y * 1.1, 10001, 0.7, 0.7, Gosu::Color::argb(255, 0, 0, 0))
   end
 end

@@ -1,34 +1,38 @@
 Dir["./entities/**/*.rb"].each {|file| require file }
 
-PLAYER = Player.new
-HANSES  = Enemy.new("hanses", Gosu::Color::argb(150, 255, 255, 0))
-ANAAAM  = Enemy.new("anaaam", Gosu::Color::argb(150, 255, 0, 255))
-CAMERA = Camera.new
+PLAYER   = Player.new
+HANSES   = Enemy.new("hanses",   Gosu::Color::argb(150, 0, 0, 0))
+ANAAAM   = Enemy.new("anaaam",   Gosu::Color::argb(150, 0, 0, 0))
+MACHETTE = Enemy.new("machette", Gosu::Color::argb(150, 0, 0, 0))
+OMAR     = Enemy.new("omar",     Gosu::Color::argb(150, 0, 0, 0))
+CAMERA   = Camera.new
 WORLDGEN = WorldGen.new
 # SPATIAL_INDEX = SpatialIndex.new
 
 COMPETITORS = [
   PLAYER,
   HANSES,
-  ANAAAM
+  ANAAAM,
+  MACHETTE,
+  OMAR
 ]
 
 def reset_world
   PLAYER.send :initialize
   HANSES.send :initialize, "hanses", Gosu::Color::argb(150, 255, 255, 0)
   ANAAAM.send :initialize, "anaaam", Gosu::Color::argb(150, 255, 0, 255)
-  WORLD_STATE.clear
+  MACHETTE.send :initialize, "machette", Gosu::Color::argb(150, 255, 0, 0)
+  OMAR.send :initialize, "omar",     Gosu::Color::argb(150, 120, 120, 255)
 end
 
 class GameWorld < EntitySystem
   def initialize
     super
-    @entities << PLAYER
-    @entities << HANSES
-    @entities << ANAAAM
+    COMPETITORS.each {|e| @entities.add e }
     @entities << CAMERA
     @entities << WORLDGEN
     @entities << PathRecorder.new if DEV_MODE
+    reset_world
   end
 
   def draw
@@ -53,8 +57,10 @@ class GameWorld < EntitySystem
     Assets::UI_FONT.draw_text("#{DATA[:player_kph].to_i} kph #{(DATA[:race_time] / 1000).to_i} secs", *UI_TEXT_TOP_LEFT, 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
 
     if PLAYER.race_completed
-      COMPETITORS.each_with_index do |competitor, i|
-        Assets::UI_FONT.draw_text(i.to_s + ". " + competitor.name, 0, VIEWPORT_SIZE.y * 0.2 + i * UI_TEXT_HEIGHT, 10000, 1.0, 1.0, Gosu::Color::argb(255, 255, 100, 0))
+      COMPETITORS.sort do |c|
+        -c.race_time
+      end.COMPETITORS.each_with_index do |competitor, i|
+        Assets::UI_FONT.draw_text((i + 1).to_s + ". " + competitor.name, 0, VIEWPORT_SIZE.y * 0.2 + i * UI_TEXT_HEIGHT, 10000, 1.0, 1.0, Gosu::Color::argb(255, 255, 100, 0))
       end
     else
       if DATA[:big_text]
@@ -64,9 +70,11 @@ class GameWorld < EntitySystem
       end
     end
 
-    draw_progress(PLAYER, "Player")
-    draw_progress(HANSES, "Hanses Oddvindsen", Assets::HANSES)
-    draw_progress(ANAAAM, "Anaaam Jabars Abdul Nabi")
+    draw_progress(PLAYER,   "Player")
+    draw_progress(HANSES,   "Hanses Oddvindsen", Assets::HANSES)
+    draw_progress(ANAAAM,   "Anaaam Jabars Abdul Nabi")
+    draw_progress(MACHETTE, "Danny Machette Trejo", Assets::MACHETTE)
+    draw_progress(OMAR,     "Omar Sadarsen", Assets::OMAR)
   end
 
   def draw_progress(enemy, name, portrait=nil)

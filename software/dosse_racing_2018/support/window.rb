@@ -20,9 +20,9 @@ class Window < Gosu::Window
   def draw
     @scene.draw()
 
-    Assets::UI_FONT.draw_text(
-      "#{Gosu::fps} fps #{DATA[:active_tiles]} tiles ",
-      # + SPATIAL_INDEX.debug_str,
-      *(UI_TEXT_TOP_LEFT + Vector[0, UI_TEXT_HEIGHT]), 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
+    # Assets::UI_FONT.draw_text(
+    #   "#{Gosu::fps} fps #{DATA[:active_tiles]} tiles ",
+    #   # + SPATIAL_INDEX.debug_str,
+    #   *(UI_TEXT_TOP_LEFT + Vector[0, UI_TEXT_HEIGHT]), 10000, 1.0, 1.0, Gosu::Color::argb(100, 255, 255, 255))
   end
 end
