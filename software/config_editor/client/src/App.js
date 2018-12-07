@@ -21,10 +21,11 @@ function App() {
   )
 
   const pushConfig = (config) => {
-      fetch(endpoint, {
-        method: "UPDATE",
-        body: JSON.stringify(config)
-      })
+    console.log("Write", config);
+    fetch(endpoint, {
+      method: "POST",
+      body: JSON.stringify(config)
+    })
       .then(setConfig(config))
   };
   

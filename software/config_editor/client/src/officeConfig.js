@@ -26,65 +26,62 @@ export default {
         ]
       },
       "actions": [
-        {
-          "action": "LogEvent"
-        },
+        // {
+        //   "action": "LogEvent"
+        // },
         {
           "action": "Triggers",
-          "triggers": [
-            {
-              "condition": {
-                "property": "EventType",
-                "operator": "And",
-		"conditions": [
-		  {
-                    "property": "EventType",
-                    "operator": "In",
-                    "values": [
-                      "ButtonDown"
-                    ]
-                  },
-                  {
-                    "property": "QuantizedPotentiometerState",
-                    "operator": "==",
-                    "value": 0
-                  }
-		]
-              },
-              "actions": [
+          "triggers": ["grenade.wav", "hyperspace.wav", "pipe.wav", "screetch_pop.wav", "teleporter.wav"].map((file, i) => ({
+            "condition": {
+              "property": "EventType",
+              "operator": "And",
+              "conditions": [
                 {
-                  "action": "Shell",
-                  "command": "curl http://192.168.29.183:3000/start"
+                  "property": "EventType",
+                  "operator": "In",
+                  "values": [
+                    "ButtonDown"
+                  ]
+                },
+                {
+                  "property": "PotentiometerStep",
+                  "operator": "==",
+                  "value": i + 1
                 }
               ]
             },
-            {
-              "condition": {
-                "property": "EventType",
-                "operator": "And",
-		"conditions": [
-		  {
-                    "property": "EventType",
-                    "operator": "In",
-                    "values": [
-                      "ButtonDown"
-                    ]
-                  },
-                  {
-                    "property": "QuantizedPotentiometerState",
-                    "operator": "==",
-                    "value": 1
-                  }
-		]
-              },
-              "actions": [
+            "actions": [
+              {
+                "action": "Shell",
+                "command": "ssh pi@192.168.29.9 'aplay " + file + "'"
+              }
+            ]
+          })).concat([{
+            "condition": {
+              "property": "EventType",
+              "operator": "And",
+              "conditions": [
                 {
-                  "action": "Shell",
-                  "command": "sh pi@192.168.29.9 'aplay getupstandup.wav'"
+                  "property": "EventType",
+                  "operator": "In",
+                  "values": [
+                    "ButtonDown"
+                  ]
+                },
+                {
+                  "property": "PotentiometerStep",
+                  "operator": "==",
+                  "value": 0
                 }
               ]
-            }
-          ]
+            },
+            "actions": [
+              {
+                "action": "Shell",
+                "command": "curl 192.168.29.183:3000/start"
+              }
+            ]
+          }])
         }
       ]
     }
