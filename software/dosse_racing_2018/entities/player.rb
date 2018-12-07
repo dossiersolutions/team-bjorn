@@ -10,6 +10,7 @@ class Player
     @exhaust_time_consumed = 0
     @time = 0
     @race_time = 0
+    @race_completed = false
     @dead = false
     @dead_for = 0
 
@@ -33,19 +34,27 @@ class Player
     @color = Gosu::Color::rgb(0, 0, 255)
   end
 
-  attr_reader :position, :facing_angle, :color
+  attr_reader :position, :facing_angle, :color, :race_time, :race_completed
+
+  def name
+    "Player"
+  end
 
   def update(dt, entities)
     CONTROLS.update(dt)
 
     @time += dt
 
+
+    # TODO
+    # reset_world if Gosu.button_down?(Gosu::KB_P)
+
     if @dead
       DATA[:big_text] = "You lost the race, you one-legged excuse for a dork."
       @dead_for += dt
 
       if @dead_for > 3000
-        initialize
+        reset_world
         DATA[:big_text] = nil
       end
 
@@ -152,7 +161,7 @@ class Player
     end
 
     if !@next_segment.next
-      # TODO
+      @race_completed = true
     elsif
       @race_time += dt
     end

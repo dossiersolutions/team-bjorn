@@ -23,6 +23,8 @@ module Assets # preload all game assets into global constants
   LOGO       = Gosu::Image.new("assets/logo_fixed.jpg")
   STARS      = Gosu::Image.new("assets/stars.jpg")
   PINE       = Gosu::Image.new("assets/pine.png")
+  HANSES     = Gosu::Image.new("assets/hanses.jpg")
+  OMAR       = Gosu::Image.new("assets/omar.jpg")
   WHITE_SOFT = Gosu::Image.new("assets/white_soft_particle.png")
   BLACK_SOFT = Gosu::Image.new("assets/black_soft_particle.png")
   FLOWERS    = Gosu::Image.load_tiles("assets/flowers_and_stuff.png", 32, 32, retro: true)

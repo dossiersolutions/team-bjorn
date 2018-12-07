@@ -1,10 +1,7 @@
-- fix windows data file bug
-- add enemy portraits
-- audio
-- try to package windows exe with ocra
-- show score & position at the end of the game
-  add win/lose stuff
-- make it possible to restart (reinitialize all default entities)
-- restart after wining
+- machette
+- more portraits
+- audio, add win/lose sounds
+- make it possible to restart the game with some key?
+- help text in intro.
 - add countdown at beginning
 - in-game menu / pause

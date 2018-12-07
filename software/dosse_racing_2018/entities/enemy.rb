@@ -7,13 +7,21 @@ class Enemy
     @car_scale = 1
     @alpha_color = color
     @color = Gosu::Color::rgb(color.red, color.green, color.blue)
+    @race_completed = false
+    @race_time = 0.0
   end
 
-  attr_reader :alpha_color, :color
+  attr_reader :alpha_color, :color, :race_completed, :race_time, :name
 
   def update(dt, entities)
     @time += dt
-    @current_frame = @data[[(@time / ENEMY_FRAME_LENGTH).to_i, @data.size - 1].min]
+    @current_index = [(@time / ENEMY_FRAME_LENGTH).to_i, @data.size - 1].min
+    @current_frame = @data[@current_index]
+    if @current_index == @data.size - 1
+      @race_completed = true
+    else
+      @race_time += dt
+    end
   end
 
   def position
