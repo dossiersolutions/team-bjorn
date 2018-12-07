@@ -15,7 +15,7 @@ class PathRecorder
     end
 
     if Gosu.button_down?(Gosu::KB_R)
-      File.write("anaaam.enemy", Marshal.dump(@frames))
+      serialize_to_file("anaaam.enemy", @frames)
     end
   end
 

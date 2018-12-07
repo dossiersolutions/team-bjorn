@@ -19,8 +19,16 @@ gemfile do # this uses bundler to install external gems
   gem "perlin", require: true
 end
 
-def deserialize(str)
-  JSON.parse(Zlib::inflate(str))
+def serialize_to_file(gz_path, data)
+  Zlib::GzipWriter.open(gz_path) do |gz|
+    gz.write data.to_json
+  end
+end
+
+def deserialize_from_file(gz_path)
+  Zlib::GzipReader.open(gz_path) do |gz|
+    JSON.parse(gz.read)
+  end
 end
 
 require "./support/math"

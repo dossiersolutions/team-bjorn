@@ -1,7 +1,7 @@
 class Enemy
   def initialize(name, color)
     @name = name
-    @data = deserialize(File.read(name + ".enemy"))
+    @data = deserialize_from_file(name + ".enemy")
     @time = 0
     @current_frame = @data.first
     @car_scale = 1

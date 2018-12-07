@@ -30,7 +30,7 @@ module Assets # preload all game assets into global constants
   JINGLE     = Gosu::Song.new("assets/jingle.ogg")
   UI_FONT    = Gosu::Font.new(UI_TEXT_HEIGHT.to_i, name: "assets/retganon.ttf")
 
-  ROAD       = deserialize(File.read("road.path"))
+  ROAD       = deserialize_from_file("road.path")
 end
 
 srand 1234
