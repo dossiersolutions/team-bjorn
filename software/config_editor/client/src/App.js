@@ -22,7 +22,7 @@ function App() {
 
   const pushConfig = (config) => {
       fetch(endpoint, {
-        method: "PUT",
+        method: "UPDATE",
         body: JSON.stringify(config)
       })
       .then(setConfig(config))
