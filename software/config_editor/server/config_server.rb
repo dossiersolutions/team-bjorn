@@ -11,6 +11,10 @@ require "sinatra"
 set :bind, '0.0.0.0'
 # set :port, 4567
 
+before do
+  headers "Access-Control-Allow-Origin" => "*"
+end
+
 FILE_NAME = ARGV[0]
 
 put "/config" do
