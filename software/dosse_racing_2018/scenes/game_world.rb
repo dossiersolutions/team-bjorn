@@ -59,7 +59,7 @@ class GameWorld < EntitySystem
     if PLAYER.race_completed
       COMPETITORS.sort do |c|
         -c.race_time
-      end.COMPETITORS.each_with_index do |competitor, i|
+      end.each_with_index do |competitor, i|
         Assets::UI_FONT.draw_text((i + 1).to_s + ". " + competitor.name, 0, VIEWPORT_SIZE.y * 0.2 + i * UI_TEXT_HEIGHT, 10000, 1.0, 1.0, Gosu::Color::argb(255, 255, 100, 0))
       end
     else

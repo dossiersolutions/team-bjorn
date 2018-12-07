@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@blueprintjs/select": "^3.3.0"
+  }
+}

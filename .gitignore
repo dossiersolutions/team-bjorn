@@ -4,4 +4,6 @@
 .project
 .settings
 *.iml
+software/config_editor/client/node_modules
+software/config_editor/node_modules
 ButtonEmulator.class
