@@ -1,0 +1,169 @@
+{
+  "version": "0.1",
+  "triggers": [
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 8
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "LogEvent"
+        },
+        {
+          "action": "Shell",
+          "command": "curl http://192.168.29.183:3000/start"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 1
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "Shell",
+          "command": "ssh pi@192.168.29.9 'aplay teleporter.wav'"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 2
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "Shell",
+          "command": "ssh pi@192.168.29.9 'aplay screetch_pop.wav'"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 3
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "Shell",
+          "command": "ssh pi@192.168.29.9 'aplay hyperspace.wav'"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 4
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "Shell",
+          "command": "ssh pi@192.168.29.9 'aplay acme_siren.wav'"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 5
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "Shell",
+          "command": "ssh pi@192.168.29.9 'aplay pipe.wav'"
+        }
+      ]
+    },
+    {
+      "condition": {
+        "operator": "And",
+        "conditions": [
+          {
+            "property": "EventType",
+            "operator": "==",
+            "value": "ButtonDown"
+          },
+          {
+            "property": "PotentiometerStep",
+            "operator": "==",
+            "value": 6
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action": "Shell",
+          "command": "ssh pi@192.168.29.9 'aplay grenade.wav'"
+        }
+      ]
+    }
+  ]
+}
