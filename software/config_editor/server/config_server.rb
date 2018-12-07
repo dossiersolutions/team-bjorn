@@ -1,4 +1,4 @@
-require "bundler/inline"
+# require "bundler/inline"
 
 require "json"
 require "sinatra"
@@ -7,6 +7,9 @@ require "sinatra"
 #   source "https://rubygems.org"
 #   gem "sinatra", require: true
 # end
+
+set :bind, '0.0.0.0'
+# set :port, 4567
 
 FILE_NAME = ARGV[0]
 
